@@ -166,18 +166,24 @@ struct systemi {
 	void				prepare();
 };
 struct variants : adat<variant, 128> {
-	void				addships(const systemi* fs, point fp, int r);
-	void				addplanets(const systemi* fs);
+	void				addships(variant vs, point fp, int r);
+	void				addplanets(variant vs);
 };
 struct objectable : adat<object, 32> {
 };
-struct shipi : statable {
+struct moveable {
+	point				position;
+	point				moveto;
+};
+struct shipi : statable, moveable {
 	static const variant_s kind = Ship;
 	variant				parent;
-	point				position;
 	size_s				size;
 	variant				location;
 	objectable			objects;
+	void				paint() const;
+	void				play();
+	void				setcourse(bool interactive);
 };
 struct squadi {
 	const char*			id;

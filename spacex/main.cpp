@@ -5,16 +5,21 @@ static systemi* find_system(const char* id) {
 	return (systemi*)v;
 }
 
+static void test_ship() {
+	auto p = bsdata<shipi>::add();
+	variant v1 = "Earth";
+	p->parent = "Sun";
+	p->position = ((planeti*)v1)->position;
+	p->play();
+}
+
 int main() {
 	srand(clock());
 	if(!game.readf("data/planets.json"))
 		return -1;
 	draw::initialize();
 	draw::setbitmap("space2");
-	auto p = find_system("Sun");
-	if(!p)
-		return -1;
-	p->play();
+	test_ship();
 	return 0;
 }
 

@@ -290,16 +290,35 @@ static void shadow(const rect& rc, color c) {
 	rectf(rc, c, op);
 }
 
-static int status(int x, int y, int width, const char* format) {
-	shadow({x - 1, y - 1, x + width + 1, y + 1 + texth()}, colors::form);
+static void uptop_tooltips() {
+	tooltips_point.x = 0;
+	tooltips_point.y = gui.border * 2;
+}
+
+static int status(int x, int y, int width, const char* format, const char* title) {
+	rect rc = {x - 1, y - 1, x + width + 1, y + 1 + texth()};
+	shadow(rc, colors::form);
 	text(x + (width - textw(format)) / 2, y, format);
+	if(ishilite(rc)) {
+		uptop_tooltips();
+		stringbuilder sb(tooltips_text);
+		sb.add(title);
+	}
 	return x + width + 2 + gui.border;
 }
 
-static int status(int x, int y, int width, int value) {
+static int status(int x, int y, int width, int value, const char* title) {
 	char temp[32]; stringbuilder sb(temp);
 	sb.add("%1i", value);
-	return status(x, y, width, temp);
+	return status(x, y, width, temp, title);
+}
+
+static void variant_tips() {
+	if(hilite_object) {
+		uptop_tooltips();
+		stringbuilder sb(tooltips_text);
+		hilite_object.getinfo(sb);
+	}
 }
 
 static void status_panel() {
@@ -307,14 +326,16 @@ static void status_panel() {
 	shadow(rc, colors::form);
 	auto x1 = rc.x1 + gui.border;
 	auto y1 = rc.y1 + gui.border;
-	x1 = status(x1, y1, 120, "28 января 3012");
-	x1 = status(x1, y1, 64, game.get(Credits));
-	if(hilite_object) {
-		tooltips_point.x = 0;
-		tooltips_point.y = gui.border * 2;
-		stringbuilder sb(tooltips_text);
-		hilite_object.getinfo(sb);
-	}
+	x1 = status(x1, y1, 120, "28 января 3012", "Текущая дата");
+	x1 = status(x1, y1, 64, game.get(Credits), "Ваши кредиты");
+}
+
+void shipi::paint() const {
+	auto x = position.x;
+	auto y = position.y;
+	auto r = 4;
+	line(x - r, y, x + r, y, colors::green);
+	line(x, y - r, x, y + r, colors::green);
 }
 
 void planeti::paint() const {
@@ -353,6 +374,9 @@ static void paint_object(variant v) {
 	systemi* ps = v;
 	if(ps)
 		ps->paint();
+	shipi* pp = v;
+	if(pp)
+		pp->paint();
 }
 
 static void paint_objects() {
@@ -416,10 +440,6 @@ void draw::setbitmap(const char* id) {
 	background_bitmap = szdup(id);
 }
 
-//void gamei::slideto(point position) {
-//	camera = position;
-//}
-
 static void answer_button(int x, int& y, int id, const char* string, unsigned key) {
 	auto text_height = 0;
 	text_height = texth(string, gui.window_width);
@@ -428,8 +448,13 @@ static void answer_button(int x, int& y, int id, const char* string, unsigned ke
 	text(rc, string, AlignCenterCenter);
 	y += rc.height() + gui.border * 2;
 	auto need_execute = false;
-	if(rs && hot.key == MouseLeft && !hot.pressed)
-		need_execute = true;
+	if(rs) {
+		variant v = (void*)id;
+		if(v)
+			hilite_object = v;
+		if(hot.key == MouseLeft && !hot.pressed)
+			need_execute = true;
+	}
 	if(key && hot.key == key)
 		need_execute = true;
 	if(need_execute)
@@ -455,6 +480,7 @@ int answers::choosev(const char* title, const char* cancel_text, bool interactiv
 		}
 		if(cancel_text)
 			answer_button(x, y, 0, cancel_text, KeyEscape);
+		variant_tips();
 		domodal();
 		control_standart();
 	}

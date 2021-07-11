@@ -179,6 +179,9 @@
     <ClCompile Include="information.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
+    <ClCompile Include="ship.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\planets.json">

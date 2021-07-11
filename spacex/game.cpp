@@ -41,8 +41,8 @@ variant gamei::choose(const char* title, variant_s filter) {
 	for(auto v : draw::objects) {
 		if(v.getkind() != filter)
 			continue;
-		an.add(v, v.getname());
+		an.add((int)v.getpointer(), v.getname());
 	}
 	an.sort();
-	return an.choosev(title, 0, true, 0);
+	return (void*)an.choosev(title, 0, true, 0);
 }

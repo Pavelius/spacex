@@ -185,6 +185,7 @@
     <ClCompile Include="property.cpp" />
     <ClCompile Include="resource_dynamic.cpp" />
     <ClCompile Include="settlement.cpp" />
+    <ClCompile Include="ship.cpp" />
     <ClCompile Include="size.cpp" />
     <ClCompile Include="squad.cpp" />
     <ClCompile Include="stringbuilder.cpp" />
