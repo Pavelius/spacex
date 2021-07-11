@@ -1,0 +1,58 @@
+{
+  "Systems": {
+    "Sun": {
+      "name" : "Солнце"
+    }
+  },
+  "Planets": {
+    "Mars": {
+      "parent": "Sun",
+      "name": "Марс",
+      "position": {
+        "x": "100",
+        "y": "200"
+      },
+    },
+    "Earth": {
+      "parent": "Sun",
+      "name": "Земля",
+      "position": {
+        "x": "300",
+        "y": "400"
+      }
+    },
+    "Venera": {
+      "parent": "Sun",
+      "name": "Венера",
+      "position": {
+        "x": "700",
+        "y": "500"
+      }
+    },
+    "Saturn": {
+      "parent": "Sun",
+      "name": "Сатурн",
+      "position": {
+        "x": "400",
+        "y": "500"
+      }
+    },
+    "Mercury": {
+      "parent": "Sun",
+      "name": "Меркурий",
+      "position": {
+        "x": "200",
+        "y": "50"
+      }
+    },
+    "Jupiter": {
+      "parent": "Sun",
+      "name": "Юпитер",
+      "size": "Huge",
+      "position": {
+        "x": "600",
+        "y": "300"
+      }
+    }
+  },
+}
