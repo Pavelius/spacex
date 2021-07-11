@@ -89,6 +89,20 @@ struct varianta {
 	const variant*		begin() const { return bsdata<variant>::elements + start; }
 	const variant*		end() const { return begin() + count; }
 };
+class datetime {
+	constexpr static unsigned sy = 3000;
+	constexpr static unsigned mpd = 24 * 10;
+	constexpr static unsigned dpy = 365;
+	unsigned			value;
+public:
+	constexpr datetime() : value(0) {}
+	constexpr datetime(unsigned v) : value(v) {}
+	constexpr datetime(int year, int month, int day) : value((year - sy)*(dpy*mpd)) {}
+	constexpr explicit operator int() const { return value; }
+	constexpr int		getday() const { return 0; }
+	constexpr int		getmonth() const { return 0; }
+	constexpr int		getyear() const { return sy + value / (dpy * mpd); }
+};
 class object : public variant {
 	char				status[4];
 public:
@@ -130,6 +144,7 @@ struct locationi {
 struct landscapei {
 	const char*			id;
 	const char*			name;
+	const char*			text;
 };
 struct sizei {
 	const char*			id;
@@ -161,7 +176,6 @@ struct systemi {
 	const char*			id;
 	const char*			name;
 	void				getinfo(stringbuilder& sb) const;
-	void				play();
 	void				paint() const;
 	void				prepare();
 };
@@ -172,8 +186,7 @@ struct variants : adat<variant, 128> {
 struct objectable : adat<object, 32> {
 };
 struct moveable {
-	point				position;
-	point				moveto;
+	point				position, start_position, target_position;
 };
 struct shipi : statable, moveable {
 	static const variant_s kind = Ship;
@@ -181,6 +194,7 @@ struct shipi : statable, moveable {
 	size_s				size;
 	variant				location;
 	objectable			objects;
+	void				adventure();
 	void				paint() const;
 	void				play();
 	void				setcourse(bool interactive);
@@ -214,7 +228,9 @@ class gamei : public resourceable {
 	unsigned			round;
 	unsigned			credits;
 public:
-	static variant		choose(const char* value, variant_s filter);
+	void				adventure();
+	static variant		choose(const char* value, variant_s filter, variant exclude);
+	datetime			getdate() const { return round; }
 	void				passtime(int days);
 	static bool			readf(const char* url);
 	static result_s		roll(int dices);

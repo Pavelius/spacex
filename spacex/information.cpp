@@ -1,7 +1,8 @@
 #include "main.h"
 
 void planeti::getinfo(stringbuilder& sb) const {
-	sb.addn(bsdata<populationi>::elements[population].text);
+	sb.addn(bsdata<landscapei>::elements[landscape].text);
+	sb.adds(bsdata<populationi>::elements[population].text);
 }
 
 void systemi::getinfo(stringbuilder& sb) const {

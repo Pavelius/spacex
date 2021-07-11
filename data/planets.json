@@ -9,6 +9,7 @@
       "parent": "Sun",
       "name": "Марс",
       "population": "Cities",
+      "landscape": "RockyRealm",
       "fraction": "Confideration",
       "position": {
         "x": "100",
@@ -19,6 +20,7 @@
       "parent": "Sun",
       "name": "Земля",
       "fraction": "Confideration",
+      "landscape": "TerrainRealm",
       "population": "Overpopulated",
       "position": {
         "x": "300",
@@ -29,6 +31,7 @@
       "parent": "Sun",
       "name": "Венера",
       "population": "Cities",
+      "landscape": "CorrosiveHell",
       "fraction": "Confideration",
       "position": {
         "x": "700",

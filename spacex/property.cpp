@@ -1,6 +1,6 @@
 #include "bsreq.h"
-#include "main.h"
 #include "io_plugin.h"
+#include "main.h"
 
 #define BSLNK(L, R) template<> struct bsmeta<L> : bsmeta<R> {}; template<> struct bsdata<L> : bsdata<R> {};
 
@@ -11,27 +11,27 @@ BSDATAC(shipi, 1024);
 BSDATAC(systemi, 256);
 
 BSLNK(fraction_s, fractioni)
-BSLNK(size_s, sizei)
+BSLNK(landscape_s, landscapei)
 BSLNK(population_s, populationi)
+BSLNK(size_s, sizei)
 
-BSMETA(point) = {
-	BSREQ(x), BSREQ(y),
-	{}};
-BSMETA(variant) = {
-	{}};
-BSMETA(varianta) = {
-	BSREQ(start), BSREQ(count),
-	{}};
 BSMETA(fractioni) = {
 	BSREQ(id), BSREQ(name),
+	{}};
+BSMETA(landscapei) = {
+	BSREQ(id), BSREQ(name), BSREQ(text),
 	{}};
 BSMETA(planeti) = {
 	BSREQ(id), BSREQ(name),
 	BSREQ(position),
 	BSREQ(fraction),
+	BSREQ(landscape),
 	BSREQ(population),
 	BSREQ(parent),
 	BSREQ(size),
+	{}};
+BSMETA(point) = {
+	BSREQ(x), BSREQ(y),
 	{}};
 BSMETA(populationi) = {
 	BSREQ(id), BSREQ(name),
@@ -43,6 +43,11 @@ BSMETA(sizei) = {
 	BSREQ(id), BSREQ(name),
 	{}};
 BSMETA(shipi) = {
+	{}};
+BSMETA(variant) = {
+	{}};
+BSMETA(varianta) = {
+	BSREQ(start), BSREQ(count),
 	{}};
 
 bool gamei::readf(const char* url) {

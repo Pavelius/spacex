@@ -333,9 +333,14 @@ static void status_panel() {
 void shipi::paint() const {
 	auto x = position.x;
 	auto y = position.y;
-	auto r = 4;
-	line(x - r, y, x + r, y, colors::green);
-	line(x, y - r, x, y + r, colors::green);
+	auto r = 2;
+	//line(x - r, y, x + r, y, colors::green);
+	//line(x, y - r, x, y + r, colors::green);
+	circle(x, y, r, colors::green);
+	auto old_font = font;
+	font = small_font;
+	text(x, y, "Бетси");
+	font = old_font;
 }
 
 void planeti::paint() const {
@@ -459,6 +464,9 @@ static void answer_button(int x, int& y, int id, const char* string, unsigned ke
 		need_execute = true;
 	if(need_execute)
 		execute(breakparam, id);
+}
+
+void gamei::adventure() {
 }
 
 int answers::choosev(const char* title, const char* cancel_text, bool interactive, const char* resid, bool portraits) const {

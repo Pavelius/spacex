@@ -1,15 +1,19 @@
 #include "main.h"
 
+void shipi::adventure() {
+	position = target_position;
+}
+
 void shipi::setcourse(bool interactive) {
 	if(interactive) {
-		planeti* target = game.choose("Куда проложить курс?", Planet);
+		planeti* target = game.choose("Куда проложить курс?", Planet, {});
 		if(!target)
 			return;
-		moveto = target->position;
+		target_position = target->position;
 	} else {
 
 	}
-	position = moveto;
+	start_position = position;
 }
 
 void shipi::play() {
@@ -19,5 +23,6 @@ void shipi::play() {
 			return;
 		ps->prepare();
 		setcourse(true);
+		adventure();
 	}
 }

@@ -36,13 +36,19 @@ result_s gamei::roll(int dices) {
 	return Fail;
 }
 
-variant gamei::choose(const char* title, variant_s filter) {
+variant gamei::choose(const char* title, variant_s filter, variant exclude) {
 	answers an;
 	for(auto v : draw::objects) {
 		if(v.getkind() != filter)
+			continue;
+		if(exclude && exclude == v)
 			continue;
 		an.add((int)v.getpointer(), v.getname());
 	}
 	an.sort();
 	return (void*)an.choosev(title, 0, true, 0);
+}
+
+void gamei::passtime(int days) {
+	round += days;
 }
