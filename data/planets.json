@@ -8,6 +8,7 @@
     "Mars": {
       "parent": "Sun",
       "name": "Марс",
+      "population": "Cities",
       "fraction": "Confideration",
       "position": {
         "x": "100",
@@ -18,7 +19,7 @@
       "parent": "Sun",
       "name": "Земля",
       "fraction": "Confideration",
-      "population": "",
+      "population": "Overpopulated",
       "position": {
         "x": "300",
         "y": "400"
@@ -27,6 +28,7 @@
     "Venera": {
       "parent": "Sun",
       "name": "Венера",
+      "population": "Cities",
       "fraction": "Confideration",
       "position": {
         "x": "700",
@@ -54,6 +56,7 @@
     "Jupiter": {
       "parent": "Sun",
       "name": "Юпитер",
+      "population": "Colonies",
       "fraction": "Confideration",
       "size": "Huge",
       "position": {

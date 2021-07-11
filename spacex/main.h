@@ -75,10 +75,13 @@ public:
 	template<class T> operator T*() const { return (T*)((T::kind == c[3]) ? getpointer() : 0); }
 	void				act(const char* format, ...) const;
 	void				actv(stringbuilder& sb, const char* format, const char* format_param) const;
+	void				clear() { u = 0; }
 	gender_s			getgender() const;
+	void				getinfo(stringbuilder& sb) const;
 	void*				getpointer() const { return bsdata<varianti>::elements[c[3]].source->ptr(u & 0xFFFFFF); }
 	constexpr variant_s	getkind() const { return (variant_s)c[3]; }
 	const char*			getname() const;
+	constexpr int		getvalue() const { return u & 0xFFFFFF; }
 };
 struct varianta {
 	short unsigned		start;
@@ -135,23 +138,29 @@ struct sizei {
 struct populationi {
 	const char*			id;
 	const char*			name;
+	const char*			text;
 };
-struct planeti {
-	static const variant_s kind = Planet;
+struct nameable {
 	const char*			id;
 	const char*			name;
+};
+struct planeti : nameable {
+	static const variant_s kind = Planet;
 	fraction_s			fraction;
 	point				position;
 	variant				parent;
 	population_s		population;
 	landscape_s			landscape;
 	size_s				size;
+	void				getinfo(stringbuilder& sb) const;
+	void				getrect(rect& rc) const;
 	void				paint() const;
 };
 struct systemi {
 	static const variant_s kind = System;
 	const char*			id;
 	const char*			name;
+	void				getinfo(stringbuilder& sb) const;
 	void				play();
 	void				paint() const;
 	void				prepare();

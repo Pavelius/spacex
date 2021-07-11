@@ -21,6 +21,7 @@ static sprite*			small_font = (sprite*)loadb("art/fonts/small.pma");
 static char				answer_hotkeys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 static const char*		background_bitmap;
 variants				draw::objects;
+static variant			hilite_object;
 
 int						distance(point p1, point p2);
 
@@ -179,6 +180,7 @@ static bool control_board() {
 	}
 	return true;
 }
+
 void control_standart() {
 	if(control_board())
 		return;
@@ -264,6 +266,7 @@ static void standart_domodal() {
 }
 
 bool draw::ismodal() {
+	hilite_object.clear();
 	domodal = standart_domodal;
 	hot.cursor = CursorArrow;
 	hot.hilite.clear();
@@ -306,6 +309,12 @@ static void status_panel() {
 	auto y1 = rc.y1 + gui.border;
 	x1 = status(x1, y1, 120, "28 ÿםגאנÿ 3012");
 	x1 = status(x1, y1, 64, game.get(Credits));
+	if(hilite_object) {
+		tooltips_point.x = 0;
+		tooltips_point.y = gui.border * 2;
+		stringbuilder sb(tooltips_text);
+		hilite_object.getinfo(sb);
+	}
 }
 
 void planeti::paint() const {
@@ -315,6 +324,8 @@ void planeti::paint() const {
 	auto r = 4 + size * 2;
 	circlef(x, y, r, c, 128);
 	circle(x, y, r, c);
+	if(ishilite({x - r, y - r, x + r, y + r}))
+		hilite_object = this;
 }
 
 void systemi::paint() const {
@@ -324,6 +335,8 @@ void systemi::paint() const {
 	auto r = 4 + 10 * 2;
 	circlef(x, y, r, c, 128);
 	circle(x, y, r, c);
+	if(ishilite({x - r, y - r, x + r, y + r}))
+		hilite_object = this;
 }
 
 static void static_image() {
@@ -333,15 +346,18 @@ static void static_image() {
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
 }
 
+static void paint_object(variant v) {
+	planeti* pn = v;
+	if(pn)
+		pn->paint();
+	systemi* ps = v;
+	if(ps)
+		ps->paint();
+}
+
 static void paint_objects() {
-	for(auto v : objects) {
-		planeti* pn = v;
-		if(pn)
-			pn->paint();
-		systemi* ps = v;
-		if(ps)
-			ps->paint();
-	}
+	for(auto v : objects)
+		paint_object(v);
 }
 
 static void intro_background() {
