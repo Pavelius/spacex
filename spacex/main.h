@@ -51,6 +51,7 @@ enum result_s : unsigned char {
 	Fail, PartialSuccess, Success, CriticalSuccess,
 };
 typedef cflags<building_s> buildingf;
+typedef cflags<fraction_s> fractionf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
 struct varianti {
@@ -139,6 +140,7 @@ struct planeti {
 	static const variant_s kind = Planet;
 	const char*			id;
 	const char*			name;
+	fraction_s			fraction;
 	point				position;
 	variant				parent;
 	population_s		population;
@@ -180,6 +182,7 @@ struct troopi : public variant {
 struct fractioni {
 	const char*			id;
 	const char*			name;
+	fractionf			friendly, hostile;
 };
 struct guii {
 	int					border;

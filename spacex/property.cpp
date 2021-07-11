@@ -10,6 +10,7 @@ BSDATAC(planeti, 1024);
 BSDATAC(shipi, 1024);
 BSDATAC(systemi, 256);
 
+BSLNK(fraction_s, fractioni)
 BSLNK(size_s, sizei)
 BSLNK(population_s, populationi)
 
@@ -21,9 +22,13 @@ BSMETA(variant) = {
 BSMETA(varianta) = {
 	BSREQ(start), BSREQ(count),
 	{}};
+BSMETA(fractioni) = {
+	BSREQ(id), BSREQ(name),
+	{}};
 BSMETA(planeti) = {
 	BSREQ(id), BSREQ(name),
 	BSREQ(position),
+	BSREQ(fraction),
 	BSREQ(population),
 	BSREQ(parent),
 	BSREQ(size),
