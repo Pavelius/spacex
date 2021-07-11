@@ -164,7 +164,7 @@
     <ClCompile Include="property.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
-    <ClCompile Include="io_plugin_data.cpp">
+    <ClCompile Include="io_plugin_bsreq.cpp">
       <Filter>Поддержка</Filter>
     </ClCompile>
     <ClCompile Include="bsreq.cpp">

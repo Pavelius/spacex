@@ -4,7 +4,7 @@
 
 using namespace io;
 
-bool readft(const char* url, bsreq::custom& custom) {
+bool bsreq::custom::readf(const char* url) {
 	struct proxy : serializer::reader {
 		bsreq::custom& custom;
 		const bsreq* findsource(const char* id) const {
@@ -65,8 +65,7 @@ bool readft(const char* url, bsreq::custom& custom) {
 			}
 		}
 		static int getnumber(const char* v) {
-			int result;
-			stringbuilder::read(v, result);
+			int result; stringbuilder::read(v, result);
 			return result;
 		}
 		void set(serializer::node& e, const char* value) override {
@@ -86,18 +85,27 @@ bool readft(const char* url, bsreq::custom& custom) {
 				pm->set(ps, (int)szdup(value));
 			else if(pm->is(KindEnum)) {
 				auto i = pm->findenum(value);
-				if(i==-1) {
+				if(i == -1) {
 					error("Can't find enum value \"%1\"", value);
 					return;
 				}
 				pm->set(ps, i);
+			} else if(pm->is(KindCFlags)) {
+				auto i = pm->findenum(value);
+				if(i==-1) {
+					error("Can't find enum value \"%1\"", value);
+					return;
+				}
+				auto n = pm->get(ps);
+				n |= 1 << i;
+				pm->set(ps, n);
 			} else
 				custom.read(this, pm, e, value);
 		}
 		proxy(bsreq::custom& custom) : custom(custom) {
 		}
 	};
-	proxy reader_proxy(custom);
+	proxy reader_proxy(*this);
 	if(!reader_proxy.custom.source) {
 		reader_proxy.error("Requisit \'sources\' can't be empthy");
 		return false;

@@ -172,7 +172,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="io_plugin.cpp" />
-    <ClCompile Include="io_plugin_data.cpp" />
+    <ClCompile Include="io_plugin_bsreq.cpp" />
     <ClCompile Include="io_plugin_json.cpp" />
     <ClCompile Include="landscape.cpp" />
     <ClCompile Include="location.cpp" />

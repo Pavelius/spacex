@@ -28,19 +28,17 @@ BSMETA(planeti) = {
 	BSREQ(parent),
 	BSREQ(size),
 	{}};
+BSMETA(populationi) = {
+	BSREQ(id), BSREQ(name),
+	{}};
 BSMETA(systemi) = {
 	BSREQ(id), BSREQ(name),
 	{}};
 BSMETA(sizei) = {
 	BSREQ(id), BSREQ(name),
 	{}};
-BSMETA(populationi) = {
-	BSREQ(id), BSREQ(name),
-	{}};
 BSMETA(shipi) = {
 	{}};
-
-bool readft(const char* url, bsreq::custom& custom);
 
 bool gamei::readf(const char* url) {
 	struct custom : bsreq::custom {
@@ -84,6 +82,6 @@ bool gamei::readf(const char* url) {
 		{}};
 	custom context;
 	context.source = sources;
-	return readft(url, context);
+	return context.readf(url);
 }
 

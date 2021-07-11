@@ -24,6 +24,7 @@ struct bsreq {
 		const bsreq*		source = 0;
 		virtual void		create(const bsreq* type, void* object) {}
 		virtual void		read(serializer::reader* reader, const bsreq* type, serializer::node& e, const char* value) {}
+		bool				readf(const char* url);
 	};
 	const char*				id; // field identifier
 	unsigned				offset; // offset from begin of class or object
