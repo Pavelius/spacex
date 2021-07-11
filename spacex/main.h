@@ -131,6 +131,10 @@ struct sizei {
 	const char*			id;
 	const char*			name;
 };
+struct populationi {
+	const char*			id;
+	const char*			name;
+};
 struct planeti {
 	static const variant_s kind = Planet;
 	const char*			id;

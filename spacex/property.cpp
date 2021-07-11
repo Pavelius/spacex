@@ -2,7 +2,6 @@
 #include "main.h"
 #include "io_plugin.h"
 
-#define BSINF(N, T) {#N, bsdata<T>::source_ptr, bsmeta<T>::meta}
 #define BSLNK(L, R) template<> struct bsmeta<L> : bsmeta<R> {}; template<> struct bsdata<L> : bsdata<R> {};
 
 NOBSDATA(point)
@@ -12,6 +11,7 @@ BSDATAC(shipi, 1024);
 BSDATAC(systemi, 256);
 
 BSLNK(size_s, sizei)
+BSLNK(population_s, populationi)
 
 BSMETA(point) = {
 	BSREQ(x), BSREQ(y),
@@ -24,6 +24,7 @@ BSMETA(varianta) = {
 BSMETA(planeti) = {
 	BSREQ(id), BSREQ(name),
 	BSREQ(position),
+	BSREQ(population),
 	BSREQ(parent),
 	BSREQ(size),
 	{}};
@@ -33,14 +34,11 @@ BSMETA(systemi) = {
 BSMETA(sizei) = {
 	BSREQ(id), BSREQ(name),
 	{}};
+BSMETA(populationi) = {
+	BSREQ(id), BSREQ(name),
+	{}};
 BSMETA(shipi) = {
 	{}};
-BSDATA(bsinf) = {
-	BSINF(Planets, planeti),
-	BSINF(Systems, systemi),
-	BSINF(Ships, shipi)
-};
-BSDATAF(bsinf)
 
 bool readft(const char* url, bsreq::custom& custom);
 
@@ -58,7 +56,7 @@ bool gamei::readf(const char* url) {
 				auto ps = requisit->ptr(e.parent->object);
 				variant v = value;
 				if(!v) {
-					reader->warning("Can't find element \"%1\"", value);
+					reader->error("Can't find element \"%1\"", value);
 					return;
 				}
 				auto pv = (varianta*)ps;
@@ -73,13 +71,19 @@ bool gamei::readf(const char* url) {
 				auto ps = (variant*)requisit->ptr(e.parent->object, e.index);
 				variant v = value;
 				if(!v)
-					reader->warning("Can't find element \"%1\"", value);
+					reader->error("Can't find element \"%1\"", value);
 				else
 					*ps = v;
 			}
 		}
 	};
+	static bsreq sources[] = {
+		BSINF(Planets, planeti),
+		BSINF(Systems, systemi),
+		BSINF(Ships, shipi),
+		{}};
 	custom context;
+	context.source = sources;
 	return readft(url, context);
 }
 

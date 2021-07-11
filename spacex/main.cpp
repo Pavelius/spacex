@@ -1,19 +1,19 @@
 #include "main.h"
 
 static systemi* find_system(const char* id) {
-	for(auto& e : bsdata<systemi>()) {
-		if(strcmp(e.id, id) == 0)
-			return &e;
-	}
-	return 0;
+	variant v(id);
+	return (systemi*)v;
 }
 
 int main() {
 	srand(clock());
+	if(!game.readf("data/planets.json"))
+		return -1;
 	draw::initialize();
 	draw::setbitmap("space2");
-	game.readf("data/planets.json");
 	auto p = find_system("Sun");
+	if(!p)
+		return -1;
 	p->play();
 	return 0;
 }

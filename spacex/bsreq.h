@@ -10,6 +10,7 @@ bsmeta<meta_decoy<decltype(data_type::fn)>::value>::meta,\
 meta_kind<decltype(data_type::fn)>::value,\
 bsdata<meta_decoy<decltype(data_type::fn)>::value>::source_ptr}
 #define BSMETA(e) template<> const bsreq bsmeta<e>::meta[]
+#define BSINF(N, T) {#N, 0, sizeof(T), sizeof(T), 1, bsmeta<T>::meta, KindScalar, bsdata<T>::source_ptr}
 
 // Basic metadata types
 enum bstype_s : unsigned char {
@@ -20,6 +21,7 @@ enum bstype_s : unsigned char {
 // Metadata field descriptor
 struct bsreq {
 	struct custom {
+		const bsreq*		source = 0;
 		virtual void		create(const bsreq* type, void* object) {}
 		virtual void		read(serializer::reader* reader, const bsreq* type, serializer::node& e, const char* value) {}
 	};
@@ -54,13 +56,6 @@ struct bsreq {
 	bool					write(const char* url, void* object) const;
 };
 NOBSDATA(bsreq)
-// Abstract data source descriptor
-struct bsinf {
-	const char*				id;
-	array*					source;
-	const bsreq*			type;
-	constexpr explicit operator bool() const { return id != 0; }
-};
 struct bsparse {
 	enum error_s {
 		NoErrors,
@@ -68,7 +63,7 @@ struct bsparse {
 		ErrorNotFoundType, ErrorNotFoundBase1p, ErrorNotFoundMember1pInBase2p,
 		ErrorExpectedIdentifier,
 	};
-	const bsinf*			metadata;
+	const bsreq*			metadata;
 	virtual void			error(error_s id, const char* url, int line, int column, const char* format_param) {}
 	virtual const char*		getinclude(char* result, const char* result_end, const char* name) { return 0; }
 	virtual const bsreq*	getmeta(const char* name);

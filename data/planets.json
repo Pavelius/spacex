@@ -16,6 +16,7 @@
     "Earth": {
       "parent": "Sun",
       "name": "Земля",
+      "population" : "",
       "position": {
         "x": "300",
         "y": "400"

@@ -302,7 +302,6 @@ struct serializer {
 		virtual void				close(node& e) {}
 		virtual void				open(node& e) {}
 		virtual void				set(node& e, const char* value) = 0;
-		virtual void				warning(const char* id, ...) {}
 	};
 	virtual ~serializer() {}
 	virtual void					open(const char* id, type_s type = Text) = 0;

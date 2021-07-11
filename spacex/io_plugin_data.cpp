@@ -7,14 +7,14 @@ using namespace io;
 bool readft(const char* url, bsreq::custom& custom) {
 	struct proxy : serializer::reader {
 		bsreq::custom& custom;
-		const bsinf* findsource(const char* id) {
-			for(auto& e : bsdata<bsinf>()) {
-				if(strcmp(e.id, id) == 0)
-					return &e;
+		const bsreq* findsource(const char* id) const {
+			for(auto pe = custom.source; *pe; pe++) {
+				if(strcmp(pe->id, id) == 0)
+					return pe;
 			}
 			return 0;
 		}
-		void* findobject(bsinf* metadata, const char* id, bool create) {
+		void* findobject(bsreq* metadata, const char* id, bool create) {
 			if(!metadata || !metadata->type)
 				return 0;
 			auto ps = metadata->source;
@@ -51,8 +51,8 @@ bool readft(const char* url, bsreq::custom& custom) {
 				e.object = (void*)findsource(e.name);
 				break;
 			case 2:
-				e.metadata = (void*)((bsinf*)e.parent->object)->type;
-				e.object = findobject((bsinf*)e.parent->object, e.name, true);
+				e.metadata = (void*)((bsreq*)e.parent->object)->type;
+				e.object = findobject((bsreq*)e.parent->object, e.name, true);
 				break;
 			default:
 				e.metadata = (void*)getmeta(*e.parent)->find(e.name);
@@ -63,8 +63,6 @@ bool readft(const char* url, bsreq::custom& custom) {
 					e.object = 0;
 				break;
 			}
-		}
-		void warning(const char* text, ...) override {
 		}
 		static int getnumber(const char* v) {
 			int result;
@@ -78,7 +76,7 @@ bool readft(const char* url, bsreq::custom& custom) {
 			else
 				e.index = 0;
 			if(!pm) {
-				warning("Can't find requisit \"%1\"", e.name);
+				error("Can't find requisit \"%1\"", e.name);
 				return;
 			}
 			auto ps = pm->ptr(getobject(*e.parent), e.index);
@@ -89,7 +87,7 @@ bool readft(const char* url, bsreq::custom& custom) {
 			else if(pm->is(KindEnum)) {
 				auto i = pm->findenum(value);
 				if(i==-1) {
-					warning("Can't find enum value \"%1\"", value);
+					error("Can't find enum value \"%1\"", value);
 					return;
 				}
 				pm->set(ps, i);
@@ -100,5 +98,9 @@ bool readft(const char* url, bsreq::custom& custom) {
 		}
 	};
 	proxy reader_proxy(custom);
+	if(!reader_proxy.custom.source) {
+		reader_proxy.error("Requisit \'sources\' can't be empthy");
+		return false;
+	}
 	return io::read(url, reader_proxy);
 }
