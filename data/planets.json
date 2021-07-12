@@ -41,6 +41,7 @@
     "Saturn": {
       "parent": "Sun",
       "name": "Сатурн",
+      "landscape": "GasGiant",
       "fraction": "Confideration",
       "position": {
         "x": "400",

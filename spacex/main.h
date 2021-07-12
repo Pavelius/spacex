@@ -29,7 +29,7 @@ enum population_s : unsigned char {
 };
 enum landscape_s : unsigned char {
 	AsteroidFields,
-	TerrainRealm, ColdRealm, SandRealm, WaterRealm, FoggyJungles, RockyRealm, CorrosiveHell,
+	TerrainRealm, ColdRealm, SandRealm, WaterRealm, GasGiant, FoggyJungles, RockyRealm, CorrosiveHell,
 };
 enum size_s : unsigned char {
 	Diminutive, Small, Medium, Large, Huge, Gigantic,
@@ -233,7 +233,9 @@ public:
 	datetime			getdate() const { return round; }
 	void				passtime(int days);
 	static bool			readf(const char* url);
+	void				redraw() const;
 	static result_s		roll(int dices);
+	void				slide(point& start, point& target, point& position, int velocity) const;
 };
 extern gamei			game;
 namespace draw {

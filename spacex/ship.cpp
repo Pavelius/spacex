@@ -1,5 +1,19 @@
 #include "main.h"
 
+struct shipnamei {
+	const char*		name;
+};
+BSDATA(shipnamei) = {
+	{"Бетси"},
+	{"Клайд"},
+	{"Роланд"},
+	{"Росинант"},
+	{"Люк"},
+	{"Бенжамин"},
+	{"Гротеск"},
+	{"Скупуле"},
+};
+
 void shipi::adventure() {
 	position = target_position;
 }

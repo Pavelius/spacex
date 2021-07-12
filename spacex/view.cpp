@@ -334,13 +334,14 @@ void shipi::paint() const {
 	auto x = position.x;
 	auto y = position.y;
 	auto r = 2;
-	//line(x - r, y, x + r, y, colors::green);
-	//line(x, y - r, x, y + r, colors::green);
 	circle(x, y, r, colors::green);
 	auto old_font = font;
+	auto old_fore = fore;
 	font = small_font;
+	fore = colors::green;
 	text(x, y, "Бетси");
 	font = old_font;
+	fore = old_fore;
 }
 
 void planeti::paint() const {
@@ -466,6 +467,13 @@ static void answer_button(int x, int& y, int id, const char* string, unsigned ke
 		execute(breakparam, id);
 }
 
+void gamei::redraw() const {
+	background();
+	variant_tips();
+	sysredraw();
+	control_standart();
+}
+
 void gamei::adventure() {
 }
 
@@ -493,4 +501,17 @@ int answers::choosev(const char* title, const char* cancel_text, bool interactiv
 		control_standart();
 	}
 	return getresult();
+}
+
+void gamei::slide(point& start, point& target, point& position, int velocity) const {
+	auto maximum = distance(start, target);
+	if(!maximum)
+		return;
+	auto origin = 0;
+	while(origin < maximum) {
+		position.x = start.x + origin * (target.x - start.x) / maximum;
+		position.y = start.y + origin * (target.y - start.y) / maximum;
+		redraw();
+		origin += velocity;
+	}
 }
