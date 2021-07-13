@@ -14,16 +14,35 @@ BSDATA(shipnamei) = {
 	{"Скупуле"},
 };
 
+bool shipi::isplayer() const {
+	return game.getplayer() == this;
+}
+
+const char* shipi::getname() const {
+	return bsdata<shipnamei>::elements[0].name;
+}
+
 int shipi::getvelocity() const {
-	return 100;
+	return 50;
+}
+
+planeti* shipi::getplanet() const {
+	auto v = getposition();
+	for(auto& e : bsdata<planeti>()) {
+		if(e && e.position == v)
+			return &e;
+	}
+	return 0;
 }
 
 void shipi::setcourse(bool interactive) {
 	systemi* system = parent;
 	if(!system)
 		return;
-	system->prepare();
-	planeti* target = game.choose("Куда проложить курс?", Planet, {});
+	variants objects;
+	objects.addplanets(system);
+	objects.remove(getplanet());
+	planeti* target = objects.choose("Куда проложить курс?", interactive);
 	if(!target)
 		return;
 	setmovement(target->position);

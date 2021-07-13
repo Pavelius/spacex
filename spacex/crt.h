@@ -22,11 +22,9 @@ private:
 };
 }
 #else
-//#include <cstdlib>
 #include <initializer_list>
-#endif
-
 typedef unsigned long size_t;
+#endif
 
 extern "C" int						atexit(void(*func)(void));
 extern "C" void*					bsearch(const void* key, const void* base, unsigned num, unsigned size, int(*compar)(const void*, const void*));
@@ -164,6 +162,7 @@ struct adat {
 	int								indexof(const T t) const { for(auto& e : *this) if(e == t) return &e - data; return -1; }
 	bool							is(const T t) const { return indexof(t) != -1; }
 	void							remove(int index, int remove_count = 1) { if(index < 0) return; if(index<int(count - 1)) memcpy(data + index, data + index + 1, sizeof(data[0]) * (count - index - 1)); count--; }
+	void							remove(const T t) { remove(indexof(t), 1); }
 };
 typedef adat<void*, 64>				reflist;
 // Abstract flag data bazed on enumerator
@@ -291,10 +290,11 @@ struct serializer {
 		node*						parent;
 		int							index;
 		void*						object; // application defined data
+		void*						metadata; // application defined metadata
 		bool						skip; // set this if you want skip block
 		//
-		constexpr node(type_s type = Text) : parent(0), name(""), type(type), index(0), object(0), skip(false) {}
-		constexpr node(node& parent, const char* name = "", type_s type = Text) : parent(&parent), name(name), type(type), index(0), object(0), skip(false) {}
+		constexpr node(type_s type = Text) : parent(0), name(""), type(type), index(0), object(0), metadata(0), skip(false) {}
+		constexpr node(node& parent, const char* name = "", type_s type = Text) : parent(&parent), name(name), type(type), index(0), object(0), metadata(0), skip(false) {}
 		bool						operator==(const char* name) const { return name && strcmp(this->name, name) == 0; }
 		//
 		int							getlevel() const;

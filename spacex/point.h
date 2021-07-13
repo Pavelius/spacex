@@ -4,7 +4,7 @@
 
 struct point {
 	short int			x, y;
-	explicit			operator bool() const { return x || y; }
+	constexpr explicit operator bool() const { return x || y; }
 	bool				operator!=(const point pt) const { return pt.x != x || pt.y != y; }
 	bool				operator==(const point pt) const { return pt.x == x && pt.y == y; }
 	point				operator-(const point pt) const { return{(short)(x - pt.x), (short)(y - pt.y)}; }

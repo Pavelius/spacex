@@ -149,9 +149,6 @@
     <ClCompile Include="resource_dynamic.cpp">
       <Filter>Поддержка</Filter>
     </ClCompile>
-    <ClCompile Include="system.cpp">
-      <Filter>Логика</Filter>
-    </ClCompile>
     <ClCompile Include="variants.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
@@ -187,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="win_time.cpp">
       <Filter>Поддержка</Filter>
+    </ClCompile>
+    <ClCompile Include="datetime.cpp">
+      <Filter>Логика</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

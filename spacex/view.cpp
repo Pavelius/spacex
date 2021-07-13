@@ -20,7 +20,6 @@ static sprite*			sprite_shields = (sprite*)loadb("art/sprites/shields.pma");
 static sprite*			small_font = (sprite*)loadb("art/fonts/small.pma");
 static char				answer_hotkeys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 static const char*		background_bitmap;
-variants				draw::objects;
 static variant			hilite_object;
 static fnevent			next_proc;
 
@@ -258,7 +257,7 @@ void draw::initialize() {
 	gui.initialize();
 	create(-1, -1, 800, 600, 0, 32);
 	setcaption("Space 4X");
-	settimer(100);
+	settimer(70);
 }
 
 static void standart_domodal() {
@@ -333,7 +332,7 @@ static void status_panel() {
 	shadow(rc, colors::form);
 	auto x1 = rc.x1 + gui.border;
 	auto y1 = rc.y1 + gui.border;
-	x1 = status(x1, y1, 120, "28 января 3012", "Текущая дата");
+	x1 = status(x1, y1, 120, game.getdate().getname(), "Текущая дата");
 	x1 = status(x1, y1, 64, game.get(Credits), "Ваши кредиты");
 }
 
@@ -341,12 +340,17 @@ void shipi::paint() const {
 	auto x = getposition().x;
 	auto y = getposition().y;
 	auto r = 2;
-	circle(x, y, r, colors::green);
 	auto old_font = font;
 	auto old_fore = fore;
 	font = small_font;
-	fore = colors::green;
-	text(x, y, "Бетси");
+	if(isplayer())
+		fore = colors::white;
+	else
+		fore = colors::green;
+	line(x - r, y, x + r, y);
+	line(x, y - r, x, y + r);
+	auto name = getname();
+	text(x - (textw(name) + 1) / 2, y + 1, name);
 	font = old_font;
 	fore = old_fore;
 }
@@ -392,14 +396,24 @@ static void paint_object(variant v) {
 		pp->paint();
 }
 
-static void paint_objects() {
+static void paint_objects(const variants& objects) {
 	for(auto v : objects)
 		paint_object(v);
 }
 
 static void intro_background() {
 	static_image();
-	paint_objects();
+	variants objects;
+	auto player = game.getplayer();
+	if(!player)
+		return;
+	systemi* system = player->parent;
+	if(!system)
+		return;
+	objects.add(system);
+	objects.addplanets(system);
+	objects.addships(system, {}, 0);
+	paint_objects(objects);
 	status_panel();
 }
 
@@ -474,16 +488,9 @@ static void answer_button(int x, int& y, long id, const char* string, unsigned k
 		execute(breakparam, id);
 }
 
-void gamei::redraw() const {
-}
-
-void gamei::adventure() {
-	auto player = getplayer();
+void gamei::spaceflight() {
 	while(ismodal()) {
 		background();
-		systemi* system = player->parent;
-		if(system)
-			system->prepare();
 		variant_tips();
 		domodal();
 		control_standart();
@@ -516,19 +523,6 @@ long answers::choosev(const char* title, const char* cancel_text, bool interacti
 		control_standart();
 	}
 	return getresult();
-}
-
-void gamei::slide(point& start, point& target, point& position, int velocity) const {
-	auto maximum = distance(start, target);
-	if(!maximum)
-		return;
-	auto origin = 0;
-	while(origin < maximum) {
-		position.x = start.x + origin * (target.x - start.x) / maximum;
-		position.y = start.y + origin * (target.y - start.y) / maximum;
-		redraw();
-		origin += velocity;
-	}
 }
 
 void draw::application() {

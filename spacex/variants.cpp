@@ -20,3 +20,11 @@ void variants::addplanets(variant vs) {
 		add(&e);
 	}
 }
+
+variant variants::choose(const char* title, bool interactive) const {
+	answers an;
+	for(auto v : *this)
+		an.add((long)v.getpointer(), v.getname());
+	an.sort();
+	return (void*)an.choosev(title, 0, interactive, 0);
+}

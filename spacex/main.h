@@ -94,13 +94,15 @@ class datetime {
 	constexpr static unsigned dpy = 365;
 	unsigned			value;
 public:
-	constexpr static unsigned mpd = 24 * 10;
+	constexpr static unsigned mpd = 24;
 	constexpr datetime() : value(0) {}
 	constexpr datetime(unsigned v) : value(v) {}
 	constexpr datetime(int year, int month, int day) : value((year - sy)*(dpy*mpd)) {}
 	constexpr explicit operator int() const { return value; }
-	constexpr int		getday() const { return 0; }
-	constexpr int		getmonth() const { return 0; }
+	constexpr int		getday() const { return 1 + value / mpd; }
+	constexpr int		getdayofmonth() const { return getday(); }
+	constexpr int		getmonth() const { return 1; }
+	const char*			getname() const;
 	constexpr int		getyear() const { return sy + value / (dpy * mpd); }
 };
 class object : public variant {
@@ -167,6 +169,7 @@ struct planeti : nameable {
 	population_s		population;
 	landscape_s			landscape;
 	size_s				size;
+	constexpr explicit operator bool() const { return position.operator bool(); }
 	void				getinfo(stringbuilder& sb) const;
 	void				getrect(rect& rc) const;
 	void				paint() const;
@@ -177,11 +180,11 @@ struct systemi {
 	const char*			name;
 	void				getinfo(stringbuilder& sb) const;
 	void				paint() const;
-	void				prepare();
 };
 struct variants : adat<variant, 128> {
 	void				addships(variant vs, point fp, int r);
 	void				addplanets(variant vs);
+	variant				choose(const char* title, bool interactive) const;
 };
 struct objectable : adat<object, 32> {
 };
@@ -194,6 +197,7 @@ public:
 	bool				moving(int velocity);
 	void				setmovement(point v);
 	void				setposition(point v);
+	void				setposition(variant v);
 	void				stop();
 };
 struct shipi : statable, moveable {
@@ -203,10 +207,12 @@ struct shipi : statable, moveable {
 	variant				location;
 	objectable			objects;
 	constexpr explicit operator bool() const { return parent; }
+	const char*			getname() const;
+	planeti*			getplanet() const;
 	int					getvelocity() const;
+	bool				isplayer() const;
 	void				maketurn(bool interactive);
 	void				paint() const;
-	void				play();
 	void				setcourse(bool interactive);
 };
 struct squadi {
@@ -238,24 +244,19 @@ class gamei : public resourceable {
 	unsigned			round;
 	unsigned			credits;
 public:
-	static void			adventure();
-	static variant		choose(const char* value, variant_s filter, variant exclude);
 	datetime			getdate() const { return round; }
 	static shipi*		getplayer();
 	unsigned			getround() const { return round; }
 	void				maketurn();
 	void				passtime(int days);
-	void				play();
 	static bool			readf(const char* url);
-	void				redraw() const;
 	static result_s		roll(int dices);
-	void				slide(point& start, point& target, point& position, int velocity) const;
+	static void			spaceflight();
 };
 extern gamei			game;
 namespace draw {
 void					application();
 void					initialize();
-extern variants			objects;
 void					setbackground(fnevent pv);
 void					setbitmap(const char* id);
 void					setnext(fnevent pv);

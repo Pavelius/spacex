@@ -5,12 +5,18 @@ static systemi* find_system(const char* id) {
 	return (systemi*)v;
 }
 
-static void test_ship() {
+static void add_ship(const char* planet) {
 	auto p = bsdata<shipi>::add();
-	variant v1 = "Earth";
 	p->parent = "Sun";
-	p->setposition(((planeti*)v1)->position);
-	draw::setnext(game.adventure);
+	p->setposition(planet);
+}
+
+static void test_ship() {
+	add_ship("Earth");
+	add_ship("Mars");
+	add_ship("Saturn");
+	add_ship("Saturn");
+	draw::setnext(game.spaceflight);
 }
 
 int main() {

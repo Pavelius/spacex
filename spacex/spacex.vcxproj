@@ -165,6 +165,7 @@
     <ClCompile Include="converter.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="damage.cpp" />
+    <ClCompile Include="datetime.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="draw_text.cpp" />
     <ClCompile Include="draw_textf.cpp" />
@@ -191,7 +192,6 @@
     <ClCompile Include="squad.cpp" />
     <ClCompile Include="stringbuilder.cpp" />
     <ClCompile Include="surface_serial.cpp" />
-    <ClCompile Include="system.cpp" />
     <ClCompile Include="szdup.cpp" />
     <ClCompile Include="variant.cpp" />
     <ClCompile Include="variants.cpp" />

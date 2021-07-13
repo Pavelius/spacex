@@ -15,6 +15,20 @@ void moveable::setposition(point v) {
 	start_date = 0;
 }
 
+void moveable::setposition(variant v) {
+	switch(v.getkind()) {
+	case Planet:
+		setposition(bsdata<planeti>::elements[v.getvalue()].position);
+		break;
+	case System:
+		setposition(point{800 / 2, 600 / 2});
+		break;
+	case Ship:
+		setposition(bsdata<shipi>::elements[v.getvalue()].getposition());
+		break;
+	}
+}
+
 void moveable::setmovement(point v) {
 	start_position = position;
 	target_position = v;
