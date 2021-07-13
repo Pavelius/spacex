@@ -24,18 +24,18 @@ void moveable::setmovement(point v) {
 bool moveable::moving(int velocity) {
 	if(!ismoving())
 		return false;
-	unsigned maximum = distance(start_position, target_position);
+	long maximum = distance(start_position, target_position);
 	if(!maximum) {
 		position = target_position;
 		return false;
 	}
-	unsigned passed_time = game.getround() - start_date;
-	unsigned current = velocity * passed_time / datetime::mpd;
+	long passed_time = game.getround() - start_date;
+	long current = velocity * passed_time / datetime::mpd;
 	if(current >= maximum)
 		position = target_position;
 	else {
-		position.x = start_position.x + (start_position.x - target_position.x) * current / maximum;
-		position.y = start_position.y + (start_position.y - target_position.y) * current / maximum;
+		position.x = (short)(start_position.x + (target_position.x - start_position.x) * current / maximum);
+		position.y = (short)(start_position.y + (target_position.y - start_position.y) * current / maximum);
 	}
 	return true;
 }

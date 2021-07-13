@@ -22,6 +22,7 @@ static char				answer_hotkeys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 
 static const char*		background_bitmap;
 variants				draw::objects;
 static variant			hilite_object;
+static fnevent			next_proc;
 
 int						distance(point p1, point p2);
 extern void				sleep(unsigned ms); // Set random seed
@@ -256,7 +257,8 @@ void draw::initialize() {
 	draw::setbackground(0);
 	gui.initialize();
 	create(-1, -1, 800, 600, 0, 32);
-	draw::setcaption("Space 4X");
+	setcaption("Space 4X");
+	settimer(100);
 }
 
 static void standart_domodal() {
@@ -275,6 +277,10 @@ bool draw::ismodal() {
 		sys_static_area.clear();
 	else
 		sys_static_area = {0, 0, draw::getwidth(), draw::getheight()};
+	if(next_proc) {
+		break_modal = false;
+		return false;
+	}
 	if(!break_modal)
 		return true;
 	break_modal = false;
@@ -469,18 +475,21 @@ static void answer_button(int x, int& y, int id, const char* string, unsigned ke
 }
 
 void gamei::redraw() const {
-	background();
-	variant_tips();
-	sysredraw();
-	control_standart();
 }
 
 void gamei::adventure() {
 	auto player = getplayer();
-	systemi* system = player->parent;
-	system->prepare();
-	redraw();
-	sleep(100);
+	while(ismodal()) {
+		background();
+		systemi* system = player->parent;
+		if(system)
+			system->prepare();
+		variant_tips();
+		domodal();
+		control_standart();
+		if(hot.key == InputTimer)
+			game.maketurn();
+	}
 }
 
 int answers::choosev(const char* title, const char* cancel_text, bool interactive, const char* resid, bool portraits) const {
@@ -520,4 +529,15 @@ void gamei::slide(point& start, point& target, point& position, int velocity) co
 		redraw();
 		origin += velocity;
 	}
+}
+
+void draw::application() {
+	while(next_proc) {
+		auto p = next_proc;
+		next_proc = 0; p();
+	}
+}
+
+void draw::setnext(fnevent v) {
+	next_proc = v;
 }

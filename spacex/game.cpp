@@ -53,7 +53,7 @@ void gamei::passtime(int days) {
 	round += days;
 }
 
-shipi* gamei::getplayer() const {
+shipi* gamei::getplayer() {
 	return bsdata<shipi>::elements;
 }
 
@@ -62,6 +62,5 @@ void gamei::maketurn() {
 		if(e)
 			e.maketurn(getplayer()==&e);
 	}
-	adventure();
 	round++;
 }

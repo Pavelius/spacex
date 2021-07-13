@@ -238,10 +238,10 @@ class gamei : public resourceable {
 	unsigned			round;
 	unsigned			credits;
 public:
-	void				adventure();
+	static void			adventure();
 	static variant		choose(const char* value, variant_s filter, variant exclude);
 	datetime			getdate() const { return round; }
-	shipi*				getplayer() const;
+	static shipi*		getplayer();
 	unsigned			getround() const { return round; }
 	void				maketurn();
 	void				passtime(int days);
@@ -253,10 +253,12 @@ public:
 };
 extern gamei			game;
 namespace draw {
+void					application();
 void					initialize();
 extern variants			objects;
-void					setbackground(fnevent pf);
+void					setbackground(fnevent pv);
 void					setbitmap(const char* id);
+void					setnext(fnevent pv);
 }
 inline int				d100() { return rand() % 100; }
 extern int				distance(point p1, point p2);

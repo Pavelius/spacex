@@ -10,8 +10,7 @@ static void test_ship() {
 	variant v1 = "Earth";
 	p->parent = "Sun";
 	p->setposition(((planeti*)v1)->position);
-	while(true)
-		game.maketurn();
+	draw::setnext(game.adventure);
 }
 
 int main() {
@@ -21,6 +20,7 @@ int main() {
 	draw::initialize();
 	draw::setbitmap("space2");
 	test_ship();
+	draw::application();
 	return 0;
 }
 
