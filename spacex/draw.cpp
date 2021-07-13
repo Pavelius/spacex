@@ -1067,7 +1067,7 @@ void draw::bezier(int x0, int y0, int x1, int y1, int x2, int y2) {
 
 void draw::spline(point* original_points, int n) {
 	point points[256];
-	n = imin(sizeof(points) / sizeof(points[0]), (unsigned)n) - 1;
+	n = imin(sizeof(points) / sizeof(points[0]), (size_t)n) - 1;
 	memcpy(points, original_points, sizeof(points[0]) * (n + 1));
 	const int M_MAX = 6;
 	float mi = 1, m[M_MAX];                    /* diagonal constants of matrix */
