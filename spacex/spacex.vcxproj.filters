@@ -188,6 +188,9 @@
     <ClCompile Include="datetime.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
+    <ClCompile Include="protoship.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\planets.json">

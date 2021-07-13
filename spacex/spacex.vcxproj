@@ -185,6 +185,7 @@
     <ClCompile Include="point.cpp" />
     <ClCompile Include="population.cpp" />
     <ClCompile Include="property.cpp" />
+    <ClCompile Include="protoship.cpp" />
     <ClCompile Include="resource_dynamic.cpp" />
     <ClCompile Include="settlement.cpp" />
     <ClCompile Include="ship.cpp" />

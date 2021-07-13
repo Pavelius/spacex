@@ -19,11 +19,11 @@ bool shipi::isplayer() const {
 }
 
 const char* shipi::getname() const {
-	return bsdata<shipnamei>::elements[0].name;
+	return bsdata<protoshipi>::elements[type].name;
 }
 
 int shipi::getvelocity() const {
-	return 50;
+	return bsdata<protoshipi>::elements[type].speed;
 }
 
 planeti* shipi::getplanet() const {

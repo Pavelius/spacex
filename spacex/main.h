@@ -50,6 +50,10 @@ enum gender_s : unsigned char {
 enum result_s : unsigned char {
 	Fail, PartialSuccess, Success, CriticalSuccess,
 };
+enum protoship_s : unsigned char {
+	Zond, Capsule, Shuttle, Ranger, Fighter, Interceptor, Stormship, Transporter,
+	Cruiser, Carrier, Linkor, Dreadnought, Station,
+};
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
@@ -76,8 +80,9 @@ public:
 	void				act(const char* format, ...) const;
 	void				actv(stringbuilder& sb, const char* format, const char* format_param) const;
 	void				clear() { u = 0; }
-	gender_s			getgender() const;
+	int					getindex(int t) const { return (getkind() == t) ? getvalue() : 0; }
 	void				getinfo(stringbuilder& sb) const;
+	gender_s			getgender() const;
 	void*				getpointer() const { return bsdata<varianti>::elements[c[3]].source->ptr(u & 0xFFFFFF); }
 	constexpr variant_s	getkind() const { return (variant_s)c[3]; }
 	const char*			getname() const;
@@ -200,11 +205,18 @@ public:
 	void				setposition(variant v);
 	void				stop();
 };
+struct protoshipi {
+	const char*			id;
+	const char*			name;
+	short				crew;
+	short				hull;
+	short				speed;
+};
 struct shipi : statable, moveable {
 	static const variant_s kind = Ship;
-	variant				parent;
+	protoship_s			type;
 	size_s				size;
-	variant				location;
+	variant				parent;
 	objectable			objects;
 	constexpr explicit operator bool() const { return parent; }
 	const char*			getname() const;
