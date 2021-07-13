@@ -43,7 +43,7 @@ variant gamei::choose(const char* title, variant_s filter, variant exclude) {
 			continue;
 		if(exclude && exclude == v)
 			continue;
-		an.add((int)v.getpointer(), v.getname());
+		an.add((long)v.getpointer(), v.getname());
 	}
 	an.sort();
 	return (void*)an.choosev(title, 0, true, 0);

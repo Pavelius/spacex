@@ -53,12 +53,10 @@ extern "C" long long				time(long long* seconds);
 #define ANREQ(c, f) {FO(c,f), sizeof(c::f)}
 #define ANBIT(c, f, b) {FO(c,f), sizeof(c::f), b}
 #define BSDATA(e) template<> e bsdata<e>::elements[]
-#define BSDATAE(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), 0, sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
-#define BSDATAF(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
-#define BSDATAC(e, c) e bsdata<e>::elements[c] = {}; BSDATAE(e)
+#define BSDATAE(e) template<> array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), 0, sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
+#define BSDATAF(e) template<> array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
+#define BSDATAC(e, c) template<> e bsdata<e>::elements[c] = {}; BSDATAE(e)
 #define NOBSDATA(e) template<> struct bsdata<e> : bsdata<int> {};
-#define BSLNK(L, T) template<> struct bsdata<L> : bsdata<T> {};
-#define BSINF(e) {#e, bsmeta<e##i>::meta, bsdata<e##i>::source}
 #define assert_enum(e, last) static_assert(sizeof(bsdata<e>::elements) / sizeof(bsdata<e>::elements[0]) == last + 1, "Invalid count of " #e " elements"); BSDATAF(e)
 
 enum codepages { CPNONE, CP1251, CPUTF8, CPU16BE, CPU16LE };
@@ -303,6 +301,7 @@ struct serializer {
 		bool						isparent(const char* id) const { return parent && *parent == id; }
 	};
 	struct reader {
+		virtual void				error(const char* format, ...) {}
 		virtual void				open(node& e) {}
 		virtual void				set(node& e, const char* value) = 0;
 		virtual void				close(node& e) {}

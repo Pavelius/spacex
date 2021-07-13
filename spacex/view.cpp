@@ -15,7 +15,7 @@ static surface			map_image;
 static fnevent			background;
 fnevent					draw::domodal;
 extern rect				sys_static_area;
-static guii				gui; array bsdata<guii>::source(&gui, sizeof(gui), 1, 1);
+static guii				gui; template<> array bsdata<guii>::source(&gui, sizeof(gui), 1, 1);
 static sprite*			sprite_shields = (sprite*)loadb("art/sprites/shields.pma");
 static sprite*			small_font = (sprite*)loadb("art/fonts/small.pma");
 static char				answer_hotkeys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -453,7 +453,7 @@ void draw::setbitmap(const char* id) {
 	background_bitmap = szdup(id);
 }
 
-static void answer_button(int x, int& y, int id, const char* string, unsigned key) {
+static void answer_button(int x, int& y, long id, const char* string, unsigned key) {
 	auto text_height = 0;
 	text_height = texth(string, gui.window_width);
 	rect rc = {x, y, x + gui.window_width, y + text_height};
@@ -492,7 +492,7 @@ void gamei::adventure() {
 	}
 }
 
-int answers::choosev(const char* title, const char* cancel_text, bool interactive, const char* resid, bool portraits) const {
+long answers::choosev(const char* title, const char* cancel_text, bool interactive, const char* resid, bool portraits) const {
 	int x, y;
 	if(!interactive)
 		return random();
@@ -506,7 +506,7 @@ int answers::choosev(const char* title, const char* cancel_text, bool interactiv
 		y += gui.padding;
 		auto index = 0;
 		for(auto& e : elements) {
-			auto i = imin(sizeof(answer_hotkeys) / sizeof(answer_hotkeys[0]), (unsigned)index);
+			auto i = imin(sizeof(answer_hotkeys) / sizeof(answer_hotkeys[0]), (size_t)index);
 			answer_button(x, y, e.id, e.text, answer_hotkeys[i]);
 		}
 		if(cancel_text)
