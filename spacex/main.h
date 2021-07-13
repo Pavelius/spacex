@@ -91,10 +91,10 @@ struct varianta {
 };
 class datetime {
 	constexpr static unsigned sy = 3000;
-	constexpr static unsigned mpd = 24 * 10;
 	constexpr static unsigned dpy = 365;
 	unsigned			value;
 public:
+	constexpr static unsigned mpd = 24 * 10;
 	constexpr datetime() : value(0) {}
 	constexpr datetime(unsigned v) : value(v) {}
 	constexpr datetime(int year, int month, int day) : value((year - sy)*(dpy*mpd)) {}
@@ -185,8 +185,16 @@ struct variants : adat<variant, 128> {
 };
 struct objectable : adat<object, 32> {
 };
-struct moveable {
+class moveable {
 	point				position, start_position, target_position;
+	unsigned			start_date;
+public:
+	point				getposition() const { return position; }
+	bool				ismoving() const;
+	bool				moving(int velocity);
+	void				setmovement(point v);
+	void				setposition(point v);
+	void				stop();
 };
 struct shipi : statable, moveable {
 	static const variant_s kind = Ship;
@@ -194,7 +202,9 @@ struct shipi : statable, moveable {
 	size_s				size;
 	variant				location;
 	objectable			objects;
-	void				adventure();
+	constexpr explicit operator bool() const { return parent; }
+	int					getvelocity() const;
+	void				maketurn(bool interactive);
 	void				paint() const;
 	void				play();
 	void				setcourse(bool interactive);
@@ -231,7 +241,11 @@ public:
 	void				adventure();
 	static variant		choose(const char* value, variant_s filter, variant exclude);
 	datetime			getdate() const { return round; }
+	shipi*				getplayer() const;
+	unsigned			getround() const { return round; }
+	void				maketurn();
 	void				passtime(int days);
+	void				play();
 	static bool			readf(const char* url);
 	void				redraw() const;
 	static result_s		roll(int dices);

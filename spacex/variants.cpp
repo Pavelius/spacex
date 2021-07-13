@@ -5,7 +5,7 @@ void variants::addships(variant vs, point fp, int r) {
 		if(e.parent != vs)
 			continue;
 		if(r) {
-			auto d = distance(fp, e.position);
+			auto d = distance(fp, e.getposition());
 			if(d > r)
 				continue;
 		}

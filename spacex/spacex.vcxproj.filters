@@ -182,6 +182,12 @@
     <ClCompile Include="ship.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
+    <ClCompile Include="moveable.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
+    <ClCompile Include="win_time.cpp">
+      <Filter>Поддержка</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\planets.json">

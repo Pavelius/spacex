@@ -178,6 +178,7 @@
     <ClCompile Include="landscape.cpp" />
     <ClCompile Include="location.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="moveable.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="png.cpp" />
     <ClCompile Include="point.cpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="view.cpp" />
     <ClCompile Include="win_draw.cpp" />
     <ClCompile Include="win_io_file.cpp" />
+    <ClCompile Include="win_time.cpp" />
     <ClCompile Include="zip.cpp" />
   </ItemGroup>
   <ItemGroup>

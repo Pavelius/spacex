@@ -52,3 +52,16 @@ variant gamei::choose(const char* title, variant_s filter, variant exclude) {
 void gamei::passtime(int days) {
 	round += days;
 }
+
+shipi* gamei::getplayer() const {
+	return bsdata<shipi>::elements;
+}
+
+void gamei::maketurn() {
+	for(auto& e : bsdata<shipi>()) {
+		if(e)
+			e.maketurn(getplayer()==&e);
+	}
+	adventure();
+	round++;
+}

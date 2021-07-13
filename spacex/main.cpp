@@ -9,8 +9,9 @@ static void test_ship() {
 	auto p = bsdata<shipi>::add();
 	variant v1 = "Earth";
 	p->parent = "Sun";
-	p->position = ((planeti*)v1)->position;
-	p->play();
+	p->setposition(((planeti*)v1)->position);
+	while(true)
+		game.maketurn();
 }
 
 int main() {

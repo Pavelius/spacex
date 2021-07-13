@@ -24,6 +24,7 @@ variants				draw::objects;
 static variant			hilite_object;
 
 int						distance(point p1, point p2);
+extern void				sleep(unsigned ms); // Set random seed
 
 void draw::execute(fnevent proc, int value, int value2, void* object) {
 	domodal = proc;
@@ -331,8 +332,8 @@ static void status_panel() {
 }
 
 void shipi::paint() const {
-	auto x = position.x;
-	auto y = position.y;
+	auto x = getposition().x;
+	auto y = getposition().y;
 	auto r = 2;
 	circle(x, y, r, colors::green);
 	auto old_font = font;
@@ -475,6 +476,11 @@ void gamei::redraw() const {
 }
 
 void gamei::adventure() {
+	auto player = getplayer();
+	systemi* system = player->parent;
+	system->prepare();
+	redraw();
+	sleep(100);
 }
 
 int answers::choosev(const char* title, const char* cancel_text, bool interactive, const char* resid, bool portraits) const {
