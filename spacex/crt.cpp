@@ -2,6 +2,7 @@
 #include "io.h"
 
 static_assert(sizeof(anyreq) == sizeof(int), "Size anyreq class can't be different from integer size");
+
 extern "C" void* malloc(unsigned size);
 extern "C" void* realloc(void *ptr, unsigned size);
 extern "C" void	free(void* pointer);
@@ -332,7 +333,7 @@ void array::clear() {
 		return;
 	count_maximum = 0;
 	if(data)
-		delete (char*)data;
+		free(data);
 	data = 0;
 }
 

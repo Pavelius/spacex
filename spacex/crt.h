@@ -22,25 +22,11 @@ private:
 };
 }
 #else
+//#include <cstdlib>
 #include <initializer_list>
 #endif
 
-#ifdef _DEBUG
-#define assert(e) if(!(e)) {exit(255);}
-#else
-#define assert(e)
-#endif
-#define maptbl(t, id) (t[imax((unsigned)0, imin((unsigned)id, (sizeof(t)/sizeof(t[0])-1)))])
-#define maprnd(t) t[rand()%(sizeof(t)/sizeof(t[0]))]
-#define	FO(c,m) ((unsigned)&((c*)0)->m)
-#define ANREQ(c, f) {FO(c,f), sizeof(c::f)}
-#define ANBIT(c, f, b) {FO(c,f), sizeof(c::f), b}
-#define BSDATA(e) template<> e bsdata<e>::elements[]
-#define BSDATAE(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), 0, sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
-#define BSDATAF(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
-#define BSDATAC(e, c) e bsdata<e>::elements[c] = {}; BSDATAE(e)
-#define NOBSDATA(e) template<> struct bsdata<e> : bsdata<int> {};
-#define assert_enum(e, last) static_assert(sizeof(bsdata<e>::elements) / sizeof(bsdata<e>::elements[0]) == last + 1, "Invalid count of " #e " elements"); BSDATAF(e)
+typedef unsigned long size_t;
 
 extern "C" int						atexit(void(*func)(void));
 extern "C" void*					bsearch(const void* key, const void* base, unsigned num, unsigned size, int(*compar)(const void*, const void*));
@@ -55,6 +41,25 @@ extern "C" int						rand(void); // Get next random value
 extern "C" void						srand(unsigned seed); // Set random seed
 extern "C" int						strcmp(const char* s1, const char* s2); // Compare two strings
 extern "C" long long				time(long long* seconds);
+
+#ifdef _DEBUG
+#define assert(e) if(!(e)) {exit(255);}
+#else
+#define assert(e)
+#endif
+#define maptbl(t, id) (t[imax((unsigned)0, imin((unsigned)id, (sizeof(t)/sizeof(t[0])-1)))])
+#define maprnd(t) t[rand()%(sizeof(t)/sizeof(t[0]))]
+#define	FO(T,R) ((unsigned long)&((T*)0)->R)
+#define ANREQ(c, f) {FO(c,f), sizeof(c::f)}
+#define ANBIT(c, f, b) {FO(c,f), sizeof(c::f), b}
+#define BSDATA(e) template<> e bsdata<e>::elements[]
+#define BSDATAE(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), 0, sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
+#define BSDATAF(e) array bsdata<e>::source(bsdata<e>::elements, sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]), sizeof(bsdata<e>::elements)/sizeof(bsdata<e>::elements[0]));
+#define BSDATAC(e, c) e bsdata<e>::elements[c] = {}; BSDATAE(e)
+#define NOBSDATA(e) template<> struct bsdata<e> : bsdata<int> {};
+#define BSLNK(L, T) template<> struct bsdata<L> : bsdata<T> {};
+#define BSINF(e) {#e, bsmeta<e##i>::meta, bsdata<e##i>::source}
+#define assert_enum(e, last) static_assert(sizeof(bsdata<e>::elements) / sizeof(bsdata<e>::elements[0]) == last + 1, "Invalid count of " #e " elements"); BSDATAF(e)
 
 enum codepages { CPNONE, CP1251, CPUTF8, CPU16BE, CPU16LE };
 namespace metrics {
@@ -76,6 +81,7 @@ float								sqrt(const float x); // Return aquare root of 'x'
 inline const char*					skipsp(const char* p) { if(p) while(*p == ' ' || *p == '\t') p++; return p; }
 inline const char*					skipspcr(const char* p) { if(p) while(*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++; return p; }
 const char*							skipcr(const char* p);
+//int								sz2num(const char* p1, const char** pp1 = 0);
 void								szchange(char* p, char s1, char s2);
 void								szencode(char* output, int output_count, codepages output_code, const char* input, int input_count, codepages input_code);
 unsigned							szget(const char** input, codepages page = metrics::code);
@@ -256,13 +262,13 @@ NOBSDATA(unsigned char)
 NOBSDATA(const char*)
 NOBSDATA(bool)
 // Callback function of status probing. Return true if `object` support `index` status.
+typedef void(*fnevent)();
+// Callback function of status probing. Return true if `object` support `index` status.
 typedef bool(*fnallow)(const void* object, int index);
 // Callback function of choosing one element from array of many elements and storing it into `pointer`
 typedef bool(*fnchoose)(const void* object, array& source, void* pointer);
 // Callback function of checking some functionality of `object`
 typedef bool(*fnvisible)(const void* object);
-// Standart event
-typedef void(*fnevent)();
 // Callback funtion of object command executing
 typedef void(*fncommand)(void* object);
 // Callback function of source identification. Return property filled 'source'.
@@ -287,21 +293,19 @@ struct serializer {
 		node*						parent;
 		int							index;
 		void*						object; // application defined data
-		void*						metadata; // application defined metadata
 		bool						skip; // set this if you want skip block
 		//
-		constexpr node(type_s type = Text) : parent(0), name(""), type(type), index(0), object(0), metadata(0), skip(false) {}
-		constexpr node(node& parent, const char* name = "", type_s type = Text) : parent(&parent), name(name), type(type), index(0), object(0), metadata(0), skip(false) {}
+		constexpr node(type_s type = Text) : parent(0), name(""), type(type), index(0), object(0), skip(false) {}
+		constexpr node(node& parent, const char* name = "", type_s type = Text) : parent(&parent), name(name), type(type), index(0), object(0), skip(false) {}
 		bool						operator==(const char* name) const { return name && strcmp(this->name, name) == 0; }
 		//
 		int							getlevel() const;
 		bool						isparent(const char* id) const { return parent && *parent == id; }
 	};
 	struct reader {
-		virtual void				error(const char* id, ...) {}
-		virtual void				close(node& e) {}
 		virtual void				open(node& e) {}
 		virtual void				set(node& e, const char* value) = 0;
+		virtual void				close(node& e) {}
 	};
 	virtual ~serializer() {}
 	virtual void					open(const char* id, type_s type = Text) = 0;
