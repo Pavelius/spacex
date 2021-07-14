@@ -8,7 +8,7 @@
 
 enum variant_s : unsigned char {
 	NoVariant,
-	Location, Planet, Size, Ship, Squad, System,
+	Action, Location, Planet, Size, Ship, Squad, System,
 };
 enum resource_s : unsigned char {
 	Credits, Ore, Food, Medical, Drugs,
@@ -54,6 +54,9 @@ enum protoship_s : unsigned char {
 	Zond, Capsule, Shuttle, Ranger, Fighter, Interceptor, Stormship, Transporter,
 	Cruiser, Carrier, Linkor, Dreadnought, Station,
 };
+enum action_s : unsigned char {
+	Landing, Flyup, SetCourse,
+};
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
@@ -72,6 +75,7 @@ public:
 	constexpr variant() : u(0) {}
 	constexpr variant(unsigned char t, unsigned char n) : c{n, 0, 0, t} {}
 	constexpr variant(unsigned u) : u(u) {}
+	constexpr variant(action_s v) : variant(Action, v) {}
 	variant(const char* v);
 	variant(const void* v);
 	constexpr operator int() const { return u; }
@@ -96,7 +100,7 @@ struct varianta {
 };
 class datetime {
 	constexpr static unsigned sy = 3000;
-	constexpr static unsigned dpy = 365;
+	constexpr static unsigned dpy = 12 * 30;
 	unsigned			value;
 public:
 	constexpr static unsigned mpd = 24;
@@ -105,8 +109,8 @@ public:
 	constexpr datetime(int year, int month, int day) : value((year - sy)*(dpy*mpd)) {}
 	constexpr explicit operator int() const { return value; }
 	constexpr int		getday() const { return 1 + value / mpd; }
-	constexpr int		getdayofmonth() const { return getday(); }
-	constexpr int		getmonth() const { return 1; }
+	constexpr int		getdayofmonth() const { return 1 + (value / mpd) % 30; }
+	constexpr int		getmonth() const { return 1 + ((value / mpd) / 30) % 12; }
 	const char*			getname() const;
 	constexpr int		getyear() const { return sy + value / (dpy * mpd); }
 };
@@ -162,6 +166,10 @@ struct populationi {
 	const char*			name;
 	const char*			text;
 };
+struct actioni {
+	const char*			id;
+	const char*			name;
+};
 struct nameable {
 	const char*			id;
 	const char*			name;
@@ -193,6 +201,13 @@ struct variants : adat<variant, 128> {
 };
 struct objectable : adat<object, 32> {
 };
+class waitable {
+	unsigned			stamp;
+public:
+	bool				iswait() const;
+	void				wait(unsigned hours);
+	void				wakeup() { stamp = 0; }
+};
 class moveable {
 	point				position, start_position, target_position;
 	unsigned			start_date;
@@ -211,19 +226,25 @@ struct protoshipi {
 	short				crew;
 	short				hull;
 	short				speed;
+	fraction_s			manufactor;
 };
-struct shipi : statable, moveable {
+struct shipi : statable, moveable, waitable {
 	static const variant_s kind = Ship;
 	protoship_s			type;
 	size_s				size;
 	variant				parent;
 	objectable			objects;
 	constexpr explicit operator bool() const { return parent; }
+	void				apply(variant v, bool interactive);
+	variant				chooseaction(bool interactive) const;
+	void				flyup();
 	const char*			getname() const;
 	planeti*			getplanet() const;
 	int					getvelocity() const;
 	bool				isplayer() const;
+	void				landing();
 	void				maketurn(bool interactive);
+	void				nearplanet(bool interactive);
 	void				paint() const;
 	void				setcourse(bool interactive);
 };

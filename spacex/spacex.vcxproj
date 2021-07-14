@@ -158,6 +158,7 @@
     <ClInclude Include="win.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="action.cpp" />
     <ClCompile Include="answers.cpp" />
     <ClCompile Include="bsreq.cpp" />
     <ClCompile Include="bstream.cpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="variant.cpp" />
     <ClCompile Include="variants.cpp" />
     <ClCompile Include="view.cpp" />
+    <ClCompile Include="waitable.cpp" />
     <ClCompile Include="win_draw.cpp" />
     <ClCompile Include="win_io_file.cpp" />
     <ClCompile Include="win_time.cpp" />

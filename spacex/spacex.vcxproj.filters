@@ -191,6 +191,12 @@
     <ClCompile Include="protoship.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
+    <ClCompile Include="waitable.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
+    <ClCompile Include="action.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\planets.json">

@@ -4,6 +4,7 @@
 #define NMHX(T) {FO(T,name)}
 
 BSDATA(varianti) = {{""},
+	{"action", bsdata<actioni>::source_ptr, NMHX(actioni)},
 	{"location", bsdata<locationi>::source_ptr, NMHX(locationi)},
 	{"planet", bsdata<planeti>::source_ptr, NMHX(planeti)},
 	{"size", bsdata<sizei>::source_ptr, NMHX(sizei)},
