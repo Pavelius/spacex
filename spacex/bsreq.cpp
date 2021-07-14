@@ -55,7 +55,7 @@ int bsreq::findenum(const char* name) const {
 	return source->find(name, pn->offset);
 }
 
-int bsreq::get(const void* p) const {
+long bsreq::get(const void* p) const {
 	switch(size) {
 	case sizeof(char) : return *((char*)p);
 	case sizeof(short) : return *((short*)p);
@@ -63,7 +63,7 @@ int bsreq::get(const void* p) const {
 	}
 }
 
-void bsreq::set(const void* p, int value) const {
+void bsreq::set(const void* p, long value) const {
 	switch(size) {
 	case sizeof(char) : *((char*)p) = value; break;
 	case sizeof(short) : *((short*)p) = value; break;

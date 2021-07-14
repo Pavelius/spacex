@@ -41,7 +41,7 @@ struct bsreq {
 	const bsreq*			find(const char* name, unsigned count) const;
 	const bsreq*			find(const char* name, const bsreq* type) const;
 	int						findenum(const char* name) const;
-	int						get(const void* p) const;
+	long					get(const void* p) const;
 	const char*				get(const void* p, char* result, const char* result_max) const;
 	const char*				gets(const void* p) const;
 	const bsreq*			getname() const;
@@ -53,7 +53,7 @@ struct bsreq {
 	char*					ptr(const void* data, int index) const { return (char*)data + offset + index * size; }
 	void*					ptr(const void* data, const char* url, const bsreq** result) const;
 	bool					read(const char* url, const void* object) const;
-	void					set(const void* p, int value) const;
+	void					set(const void* p, long value) const;
 	bool					write(const char* url, void* object) const;
 };
 NOBSDATA(bsreq)
