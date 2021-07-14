@@ -63,7 +63,7 @@ struct file : stream {
 	static bool			setdir(const char* url);
 	int					write(const void* result, int count) override;
 private:
-	int					handle;
+	void*				handle;
 };
 struct memory : public stream {
 	memory(void* data, int size);

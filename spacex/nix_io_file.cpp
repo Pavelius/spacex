@@ -1,8 +1,10 @@
 #include <cstdio>
+#include <unistd.h>
 #include "crt.h"
 #include "io.h"
 
 void printcnf(const char* text) {
+	fwrite(text, 1, zlen(text), stdout);
 }
 
 io::file::file() : handle(0) {
@@ -51,15 +53,25 @@ const char* io::file::find::name() {
 bool io::file::create(const char* url, unsigned flags) {
 	if(handle)
 		return true;
+	const char* mode;
+	switch(flags & (StreamWrite|StreamRead)) {
+	case StreamRead: mode = "rb"; break;
+	case StreamWrite: mode = "wb"; break;
+	case StreamRead|StreamWrite: mode = "rwb"; break;
+	}
+	handle = std::fopen(url, mode);
 	return (*this);
 }
 
 void io::file::close() {
-	handle = 0;
+	if(handle){
+		std::fclose((std::FILE*)handle);
+		handle = 0;
+	}
 }
 
 char* io::file::getdir(char* url, int size) {
-	return url;
+	return getcwd(url, size);
 }
 
 char* io::file::getmodule(char* url, int size) {
@@ -67,19 +79,19 @@ char* io::file::getmodule(char* url, int size) {
 }
 
 bool io::file::setdir(const char* url) {
-	return false;
+	return chdir(url) == 0;
 }
 
 bool io::file::remove(const char* url) {
-	return false;
+	return ::remove(url)==0;
 }
 
 int io::file::read(void* p, int size) {
-	return 0;
+	return std::fread(p, 1, size, (FILE*)handle);
 }
 
 int io::file::write(const void* p, int size) {
-	return 0;
+	return std::fwrite(p, 1, size, (FILE*)handle);
 }
 
 int io::file::seek(int pos, int rel) {
@@ -87,7 +99,7 @@ int io::file::seek(int pos, int rel) {
 }
 
 bool io::file::exist(const char* url) {
-	return false;
+	return access(url, F_OK ) == 0;
 }
 
 bool io::file::makedir(const char* url) {

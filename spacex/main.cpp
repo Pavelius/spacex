@@ -1,4 +1,5 @@
 #include "main.h"
+#include "io.h"
 
 static systemi* find_system(const char* id) {
 	variant v(id);
@@ -20,6 +21,14 @@ static void test_ship() {
 	draw::setnext(game.spaceflight);
 }
 
+void printcnf(const char* text);
+
+static void test_comsole() {
+	char temp[260]; io::file::getdir(temp, sizeof(temp));
+	printcnf(temp);
+	printcnf("\n");
+}
+
 int main() {
 	srand(clock());
 	if(!game.readf("data/planets.json"))
@@ -27,6 +36,7 @@ int main() {
 	draw::initialize();
 	draw::setbitmap("space2");
 	test_ship();
+	test_comsole();
 	draw::application();
 	return 0;
 }
