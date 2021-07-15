@@ -55,7 +55,7 @@ enum protoship_s : unsigned char {
 	Cruiser, Carrier, Linkor, Dreadnought, Station,
 };
 enum action_s : unsigned char {
-	Landing, Flyup, SetCourse,
+	Landing, Investigate, Flyup, SetCourse,
 };
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
@@ -248,6 +248,7 @@ struct shipi : statable, moveable, waitable, orderable {
 	const char*			getname() const;
 	planeti*			getplanet() const;
 	int					getvelocity() const;
+	void				investigate();
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);
@@ -287,6 +288,7 @@ public:
 	datetime			getdate() const { return round; }
 	static shipi*		getplayer();
 	unsigned			getround() const { return round; }
+	static void			groundplay();
 	void				maketurn();
 	void				passtime(int days);
 	static bool			readf(const char* url);

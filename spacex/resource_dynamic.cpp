@@ -23,7 +23,7 @@ static resei* find(const char* name, const char* folder) {
 	return 0;
 }
 
-const sprite* draw::gres(const char* name, const char* folder) {
+const sprite* draw::gres(const char* name, const char* folder, point maxsize) {
 	auto p = find(name, folder);
 	if(!p) {
 		p = source.add();
@@ -51,8 +51,17 @@ const sprite* draw::gres(const char* name, const char* folder) {
 					p->data->count = 1;
 					// Дешевый и простой алгоритм сжатия без прозрачности
 					auto pd = (unsigned char*)p->data->ptr(p->data->frames[0].offset);
-					for(auto y = 0; y < dc.height; y++) {
-						for(auto x = 0; x < dc.width; x++) {
+					rect rc = {0, 0, dc.width, dc.height};
+					if(maxsize.x && rc.width() > maxsize.x) {
+						rc.x1 = (rc.width() - maxsize.x) / 2;
+						rc.x2 = rc.x1 + maxsize.x;
+					}
+					if(maxsize.y && rc.height() > maxsize.y) {
+						rc.y1 = (rc.width() - maxsize.y) / 2;
+						rc.y2 = rc.y1 + maxsize.y;
+					}
+					for(auto y = rc.y1; y < rc.y2; y++) {
+						for(auto x = rc.x1; x < rc.x2; x++) {
 							auto input = dc.ptr(x, y);
 							pd[0] = input[0];
 							pd[1] = input[1];

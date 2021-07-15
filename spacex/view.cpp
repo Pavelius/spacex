@@ -408,11 +408,11 @@ static void intro_background() {
 	if(!player)
 		return;
 	systemi* system = player->parent;
-	if(!system)
-		return;
-	objects.add(system);
-	objects.addplanets(system);
-	objects.addships(system, {}, 0);
+	if(system) {
+		objects.add(system);
+		objects.addplanets(system);
+		objects.addships(system, {}, 0);
+	}
 	paint_objects(objects);
 	status_panel();
 }
@@ -489,6 +489,19 @@ static void answer_button(int x, int& y, long id, const char* string, unsigned k
 }
 
 void gamei::spaceflight() {
+	draw::setbitmap("space2");
+	while(ismodal()) {
+		background();
+		variant_tips();
+		domodal();
+		control_standart();
+		if(hot.key == InputTimer)
+			game.maketurn();
+	}
+}
+
+void gamei::groundplay() {
+	draw::setbitmap("207");
 	while(ismodal()) {
 		background();
 		variant_tips();

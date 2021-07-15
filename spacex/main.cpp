@@ -34,7 +34,6 @@ int main() {
 	if(!game.readf("data/planets.json"))
 		return -1;
 	draw::initialize();
-	draw::setbitmap("space2");
 	test_ship();
 	test_comsole();
 	draw::application();

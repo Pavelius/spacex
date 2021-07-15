@@ -45,17 +45,18 @@ static void promt(answers& an, variant v) {
 
 variant shipi::chooseaction(bool interactive) {
 	answers an;
-	const char* resid = "jupiter";
-	switch(parent.getkind()) {
-	case System:
+	planeti* planet = parent;
+	if(planet) {
+		promt(an, Flyup);
+		if(planet->population == NoPopulated
+			|| planet->population == SmallColony)
+			promt(an, Investigate);
+	}
+	systemi* system = parent;
+	if(system) {
 		if(getplanet())
 			promt(an, Landing);
 		promt(an, SetCourse);
-		break;
-	case Planet:
-		resid = "spaceport";
-		promt(an, Flyup);
-		break;
 	}
 	if(!interactive && isorder()) {
 		auto v = getorder();
@@ -64,7 +65,7 @@ variant shipi::chooseaction(bool interactive) {
 			return v;
 		}
 	}
-	return an.choosev(0, 0, interactive, resid);
+	return an.choosev(0, 0, interactive, 0);
 }
 
 void shipi::landing() {
@@ -74,6 +75,8 @@ void shipi::landing() {
 			addorder(SetCourse);
 		parent = planet;
 		wait(xrand(3, 12));
+		if(isplayer())
+			draw::setnext(game.groundplay);
 	}
 }
 
@@ -82,6 +85,8 @@ void shipi::flyup() {
 	if(planet) {
 		parent = planet->parent;
 		wait(1);
+		if(isplayer())
+			draw::setnext(game.spaceflight);
 	}
 }
 
@@ -92,25 +97,24 @@ void shipi::setcourse(bool interactive) {
 	variants objects;
 	objects.addplanets(system);
 	objects.remove(getplanet());
-	planeti* target = objects.choose("Куда проложить курс?", interactive);
+	planeti* target = objects.choose(0, interactive);
 	if(!target)
 		return;
 	setmovement(target->position);
+}
+
+void shipi::investigate() {
+	wait(xrand(4, 8));
 }
 
 void shipi::apply(variant v, bool interactive) {
 	switch(v.getkind()) {
 	case Action:
 		switch(v.getvalue()) {
-		case SetCourse:
-			setcourse(interactive);
-			break;
-		case Landing:
-			landing();
-			break;
-		case Flyup:
-			flyup();
-			break;
+		case SetCourse: setcourse(interactive); break;
+		case Landing: landing(); break;
+		case Flyup: flyup(); break;
+		case Investigate: investigate(); break;
 		}
 		break;
 	}
