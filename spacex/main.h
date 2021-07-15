@@ -228,7 +228,14 @@ struct protoshipi {
 	short				speed;
 	fraction_s			manufactor;
 };
-struct shipi : statable, moveable, waitable {
+class orderable : adat<variant, 2> {
+public:
+	void				addorder(variant v) { add(v); }
+	variant				getorder() const { return data[0]; }
+	bool				isorder() const { return operator bool(); }
+	void				removeorder() { remove(0, 1); }
+};
+struct shipi : statable, moveable, waitable, orderable {
 	static const variant_s kind = Ship;
 	protoship_s			type;
 	size_s				size;
@@ -236,7 +243,7 @@ struct shipi : statable, moveable, waitable {
 	objectable			objects;
 	constexpr explicit operator bool() const { return parent; }
 	void				apply(variant v, bool interactive);
-	variant				chooseaction(bool interactive) const;
+	variant				chooseaction(bool interactive);
 	void				flyup();
 	const char*			getname() const;
 	planeti*			getplanet() const;

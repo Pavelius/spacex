@@ -43,7 +43,7 @@ static void promt(answers& an, variant v) {
 	}
 }
 
-variant shipi::chooseaction(bool interactive) const {
+variant shipi::chooseaction(bool interactive) {
 	answers an;
 	const char* resid = "jupiter";
 	switch(parent.getkind()) {
@@ -57,12 +57,21 @@ variant shipi::chooseaction(bool interactive) const {
 		promt(an, Flyup);
 		break;
 	}
+	if(!interactive && isorder()) {
+		auto v = getorder();
+		if(v && an.getname(getorder())) {
+			removeorder();
+			return v;
+		}
+	}
 	return an.choosev(0, 0, interactive, resid);
 }
 
 void shipi::landing() {
 	auto planet = getplanet();
 	if(planet) {
+		if(!isplayer())
+			addorder(SetCourse);
 		parent = planet;
 		wait(xrand(3, 12));
 	}

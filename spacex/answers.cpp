@@ -21,3 +21,11 @@ long answers::random() const {
 		return 0;
 	return elements.data[rand() % elements.count].id;
 }
+
+const char* answers::getname(long v) {
+	for(auto& e : elements) {
+		if(e.id == v)
+			return e.text;
+	}
+	return 0;
+}

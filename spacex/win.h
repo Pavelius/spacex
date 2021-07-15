@@ -954,7 +954,7 @@ DLL void* WINAPI			SetCapture(void*);
 DLL void* WINAPI			SetClipboardData(UINT, void*);
 DLL int WINAPI				SetCurrentDirectoryA(const char* path);
 DLL void* WINAPI			SetCursor(void*);
-DLL unsigned WINAPI			SetFilePointer(int hFile, unsigned lDistanceToMove, unsigned* lpDistanceToMoveHigh, int dwMoveMethod);
+DLL unsigned WINAPI			SetFilePointer(void* hFile, unsigned lDistanceToMove, unsigned* lpDistanceToMoveHigh, int dwMoveMethod);
 DLL void* WINAPI			SetFocus(void*);
 DLL int WINAPI				SetForegroundWindow(void*);
 DLL int WINAPI				SetPixelFormat(void*, int, const PIXELFORMATDESCRIPTOR*);

@@ -59,14 +59,14 @@ const char* io::file::find::name() {
 bool io::file::create(const char* url, unsigned flags) {
 	if(handle)
 		return true;
-	handle = (int)CreateFileA(url,
+	handle = CreateFileA(url,
 		(flags&StreamWrite) ? GENERIC_WRITE : GENERIC_READ,
 		0,
 		0,
 		(flags&StreamWrite) ? CREATE_ALWAYS : OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,
 		0);
-	if(handle == -1)
+	if(handle == (void*)-1)
 		handle = 0;
 	else {
 		if((flags&(StreamText | StreamWrite)) == (StreamText | StreamWrite)) {
