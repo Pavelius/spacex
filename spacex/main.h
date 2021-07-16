@@ -57,6 +57,7 @@ enum protoship_s : unsigned char {
 enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
 };
+typedef std::initializer_list<const char*> stringa;
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
@@ -156,6 +157,8 @@ struct landscapei {
 	const char*			id;
 	const char*			name;
 	const char*			text;
+	stringa				background;
+	const char*			getbackground(unsigned seed) const;
 };
 struct sizei {
 	const char*			id;
@@ -176,7 +179,6 @@ struct nameable {
 };
 struct planeti : nameable {
 	static const variant_s kind = Planet;
-	const char*			resid;
 	fraction_s			fraction;
 	point				position;
 	variant				parent;
@@ -184,8 +186,9 @@ struct planeti : nameable {
 	landscape_s			landscape;
 	size_s				size;
 	constexpr explicit operator bool() const { return position.operator bool(); }
+	const char*			getbackground() const { return bsdata<landscapei>::elements[landscape].getbackground(bsdata<planeti>::source.indexof(this)); }
 	void				getinfo(stringbuilder& sb) const;
-	void				getrect(rect& rc) const;
+	//void				getrect(rect& rc) const;
 	void				paint() const;
 };
 struct systemi {
