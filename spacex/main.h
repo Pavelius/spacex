@@ -176,6 +176,7 @@ struct nameable {
 };
 struct planeti : nameable {
 	static const variant_s kind = Planet;
+	const char*			resid;
 	fraction_s			fraction;
 	point				position;
 	variant				parent;

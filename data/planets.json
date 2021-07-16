@@ -33,6 +33,7 @@
       "population": "Cities",
       "landscape": "CorrosiveHell",
       "fraction": "Confideration",
+      "resid": "314",
       "position": {
         "x": "700",
         "y": "500"
@@ -52,6 +53,7 @@
       "parent": "Sun",
       "name": "Меркурий",
       "fraction": "Confideration",
+      "resid" : "201",
       "position": {
         "x": "200",
         "y": "50"
@@ -63,6 +65,7 @@
       "population": "Colonies",
       "fraction": "Confideration",
       "size": "Huge",
+      "resid": "117",
       "position": {
         "x": "600",
         "y": "300"

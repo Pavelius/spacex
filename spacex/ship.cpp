@@ -74,7 +74,7 @@ void shipi::landing() {
 		if(!isplayer())
 			addorder(SetCourse);
 		parent = planet;
-		wait(xrand(3, 12));
+		wait(1);
 		if(isplayer())
 			draw::setnext(game.groundplay);
 	}

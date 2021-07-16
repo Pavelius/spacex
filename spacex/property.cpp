@@ -23,6 +23,7 @@ BSMETA(landscapei) = {
 	{}};
 BSMETA(planeti) = {
 	BSREQ(id), BSREQ(name),
+	BSREQ(resid),
 	BSREQ(position),
 	BSREQ(fraction),
 	BSREQ(landscape),

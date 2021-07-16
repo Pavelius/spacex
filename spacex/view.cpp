@@ -501,7 +501,8 @@ void gamei::spaceflight() {
 }
 
 void gamei::groundplay() {
-	draw::setbitmap("207");
+	auto planet = getplayer()->getplanet();
+	draw::setbitmap(planet->resid ? planet->resid : "207");
 	while(ismodal()) {
 		background();
 		variant_tips();
