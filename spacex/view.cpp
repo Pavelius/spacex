@@ -362,6 +362,10 @@ void planeti::paint() const {
 	auto r = 4 + size * 2;
 	circlef(x, y, r, c, 128);
 	circle(x, y, r, c);
+	auto fore_push = fore;
+	fore = colors::gray;
+	text(x - textw(name) / 2, y + r, name);
+	fore = fore_push;
 	if(ishilite({x - r, y - r, x + r, y + r}))
 		hilite_object = this;
 }

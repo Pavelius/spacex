@@ -8,7 +8,7 @@
 
 enum variant_s : unsigned char {
 	NoVariant,
-	Action, Location, Planet, Size, Ship, Squad, System,
+	Action, Equipment, Fraction, Location, Planet, Size, Ship, Spaceunit, Squad, System,
 };
 enum resource_s : unsigned char {
 	Credits, Ore, Food, Medical, Drugs,
@@ -19,6 +19,9 @@ enum stat_s : unsigned char {
 	Jail, Medlab, Techlab, Stock, Barracs,
 	Crew,
 	HullDamage,
+};
+enum equipment_s : unsigned char {
+	MachineGun, Laser, Rocket,
 };
 enum sduad_s : unsigned char {
 	Civilians, Scientists, Technics,
@@ -57,9 +60,14 @@ enum protoship_s : unsigned char {
 enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
 };
+enum slot_s : unsigned char {
+	SlotGun, SlotLaser, SlotRocket,
+	SlotEngine,
+};
 typedef std::initializer_list<const char*> stringa;
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
+typedef cflags<slot_s> slotf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
 struct varianti {
@@ -75,7 +83,7 @@ class variant {
 public:
 	constexpr variant() : u(0) {}
 	constexpr variant(unsigned char t, unsigned char n) : c{n, 0, 0, t} {}
-	constexpr variant(unsigned u) : u(u) {}
+	constexpr variant(int u) : u(u) {}
 	constexpr variant(action_s v) : variant(Action, v) {}
 	variant(const char* v);
 	variant(const void* v);
@@ -115,11 +123,37 @@ public:
 	const char*			getname() const;
 	constexpr int		getyear() const { return sy + value / (dpy * mpd); }
 };
+struct damagei {
+	unsigned char		hits[2];
+	unsigned char		count;
+	unsigned char		range;
+	int					roll(int chance_critical = 0) const;
+	void				upgrade(equipment_s type, int power);
+};
 class object : public variant {
-	char				status[4];
+	struct {
+		unsigned char	power : 3;
+		fraction_s		origin : 3;
+		unsigned char	variation : 2;
+	};
+	unsigned char		used;
+	unsigned char		weight;
 public:
-	int					getcount() const { return status[0]; }
-	int					getweight() const;
+	int					getcount() const { return 1; }
+	damagei				getdamage() const;
+	int					getpower() const { return power; }
+	int					getweight() const { return weight * getcount(); }
+	int					getusemaximum() const;
+	bool				isweapon() const;
+	void				use() { used++; }
+};
+struct equipmenti {
+	static const variant_s kind = Equipment;
+	const char*			id;
+	const char*			name;
+	slotf				slots;
+	damagei				damage;
+	short				weight[2];
 };
 class taski {
 	char				counter;
@@ -142,12 +176,6 @@ public:
 	void				visit_goverment();
 	void				remove(building_s v) { buildings.remove(v); }
 	void				set(building_s v) { buildings.add(v); }
-};
-struct damagei {
-	unsigned char		hits[2];
-	unsigned char		count;
-	unsigned char		range;
-	int					roll(int chance_critical = 0) const;
 };
 struct locationi {
 	const char*			id;
@@ -188,7 +216,6 @@ struct planeti : nameable {
 	constexpr explicit operator bool() const { return position.operator bool(); }
 	const char*			getbackground() const { return bsdata<landscapei>::elements[landscape].getbackground(bsdata<planeti>::source.indexof(this)); }
 	void				getinfo(stringbuilder& sb) const;
-	//void				getrect(rect& rc) const;
 	void				paint() const;
 };
 struct systemi {
@@ -252,13 +279,14 @@ struct shipi : statable, moveable, waitable, orderable {
 	const char*			getname() const;
 	planeti*			getplanet() const;
 	int					getvelocity() const;
+	void				hit(damagei& damage);
 	void				investigate();
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);
-	void				nearplanet(bool interactive);
 	void				paint() const;
 	void				setcourse(bool interactive);
+	void				shoot(object& weapon, shipi& enemy);
 };
 struct squadi {
 	const char*			id;
@@ -284,6 +312,17 @@ struct guii {
 	int					tips_width;
 	int					window_width;
 	void				initialize();
+};
+class spaceunit : public moveable {
+	shipi*				ship;
+	char				range;
+public:
+	constexpr spaceunit(shipi* p) : ship(ship), range(0) {}
+	constexpr spaceunit() : spaceunit(0) {}
+	constexpr operator shipi*() { return ship; }
+	int					getrange() const { return range; }
+	shipi*				getship() { return ship; }
+	void				setrange(int v) { range = v; }
 };
 class gamei : public resourceable {
 	unsigned			round;

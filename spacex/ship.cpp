@@ -127,3 +127,12 @@ void shipi::maketurn(bool interactive) {
 		return;
 	apply(chooseaction(interactive), interactive);
 }
+
+void shipi::shoot(object& weapon, shipi& enemy) {
+	auto damage = weapon.getdamage();
+	enemy.hit(damage);
+	weapon.use();
+}
+
+void shipi::hit(damagei& damage) {
+}

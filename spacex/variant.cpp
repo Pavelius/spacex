@@ -5,10 +5,13 @@
 
 BSDATA(varianti) = {{""},
 	{"action", bsdata<actioni>::source_ptr, NMHX(actioni)},
+	{"equipment", bsdata<equipmenti>::source_ptr, NMHX(actioni)},
+	{"fraction", bsdata<fractioni>::source_ptr, NMHX(fractioni)},
 	{"location", bsdata<locationi>::source_ptr, NMHX(locationi)},
 	{"planet", bsdata<planeti>::source_ptr, NMHX(planeti)},
 	{"size", bsdata<sizei>::source_ptr, NMHX(sizei)},
 	{"ship", bsdata<shipi>::source_ptr},
+	{"spaceunit", bsdata<spaceunit>::source_ptr},
 	{"squad", bsdata<squadi>::source_ptr},
 	{"system", bsdata<systemi>::source_ptr, NMHX(systemi)},
 };

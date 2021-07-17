@@ -170,6 +170,7 @@
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="draw_text.cpp" />
     <ClCompile Include="draw_textf.cpp" />
+    <ClCompile Include="equipment.cpp" />
     <ClCompile Include="fraction.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="information.cpp" />

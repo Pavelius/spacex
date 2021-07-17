@@ -66,8 +66,8 @@ long bsreq::get(const void* p) const {
 
 void bsreq::set(const void* p, long value) const {
 	switch(size) {
-	case sizeof(char) : *((char*)p) = value; break;
-	case sizeof(short) : *((short*)p) = value; break;
+	case sizeof(char) : *((char*)p) = (char)value; break;
+	case sizeof(short) : *((short*)p) = (short)value; break;
 	case sizeof(long) : *((long*)p) = value; break;
 	default: *((int*)p) = value; break;
 	}
