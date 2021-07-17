@@ -14,6 +14,20 @@ BSDATA(shipnamei) = {
 	{"Скупуле"},
 };
 
+static void paint_spaceships() {
+	variants objects;
+	auto player = game.getplayer();
+	if(!player)
+		return;
+	systemi* system = player->parent;
+	if(system) {
+		objects.add(system);
+		objects.addplanets(system);
+		objects.addships(system, {}, 0);
+		objects.paint();
+	}
+}
+
 bool shipi::isplayer() const {
 	return game.getplayer() == this;
 }
@@ -33,6 +47,18 @@ planeti* shipi::getplanet() const {
 			return &e;
 	}
 	return 0;
+}
+
+static void spaceflight() {
+	draw::setbitmap("space2");
+	draw::setbackground(paint_spaceships);
+	game.play(game.passhour);
+}
+
+static void groundplay() {
+	auto planet = game.getplayer()->getplanet();
+	draw::setbitmap(planet->getbackground());
+	game.play(game.passhour);
 }
 
 static void promt(answers& an, variant v) {
@@ -76,7 +102,7 @@ void shipi::landing() {
 		parent = planet;
 		wait(1);
 		if(isplayer())
-			draw::setnext(game.groundplay);
+			draw::setnext(groundplay);
 	}
 }
 
@@ -86,7 +112,7 @@ void shipi::flyup() {
 		parent = planet->parent;
 		wait(1);
 		if(isplayer())
-			draw::setnext(game.spaceflight);
+			draw::setnext(spaceflight);
 	}
 }
 
@@ -100,7 +126,7 @@ void shipi::setcourse(bool interactive) {
 	planeti* target = objects.choose(0, interactive);
 	if(!target)
 		return;
-	setmovement(target->position);
+	setmovement(target->position, game.getround());
 }
 
 void shipi::investigate() {
@@ -123,7 +149,7 @@ void shipi::apply(variant v, bool interactive) {
 void shipi::maketurn(bool interactive) {
 	if(iswait())
 		return;
-	if(moving(getvelocity()))
+	if(moving(getvelocity(), game.getround()))
 		return;
 	apply(chooseaction(interactive), interactive);
 }

@@ -1,5 +1,12 @@
 #include "main.h"
 
+void variants::addspaceunits() {
+	for(auto& e : bsdata<spaceunit>()) {
+		if(e)
+			add(&e);
+	}
+}
+
 void variants::addships(variant vs, point fp, int r) {
 	for(auto& e : bsdata<shipi>()) {
 		if(e.parent != vs)
@@ -27,4 +34,9 @@ variant variants::choose(const char* title, bool interactive) const {
 		an.add((long)v.getpointer(), v.getname());
 	an.sort();
 	return (void*)an.choosev(title, 0, interactive, 0);
+}
+
+void variants::paint() const {
+	for(auto v : *this)
+		v.paint();
 }

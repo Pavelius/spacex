@@ -44,11 +44,11 @@ shipi* gamei::getplayer() {
 	return bsdata<shipi>::elements;
 }
 
-void gamei::maketurn() {
+void gamei::passhour() {
 	for(auto& e : bsdata<shipi>()) {
 		if(!e)
 			continue;
 		e.maketurn(e.isplayer());
 	}
-	round++;
+	game.round++;
 }

@@ -200,6 +200,9 @@
     <ClCompile Include="equipment.cpp">
       <Filter>Логика</Filter>
     </ClCompile>
+    <ClCompile Include="spaceunit.cpp">
+      <Filter>Логика</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\planets.json">

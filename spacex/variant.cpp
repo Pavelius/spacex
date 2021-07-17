@@ -49,3 +49,12 @@ const char* variant::getname() const {
 		return "No name";
 	return *(const char**)((char*)getpointer() + e.names[0]);
 }
+
+void variant::paint() const {
+	switch(getkind()) {
+	case Planet: bsdata<planeti>::elements[getvalue()].paint(); break;
+	case System: bsdata<systemi>::elements[getvalue()].paint(); break;
+	case Ship: bsdata<shipi>::elements[getvalue()].paint(); break;
+	case Spaceunit: bsdata<spaceunit>::elements[getvalue()].paint(); break;
+	}
+}

@@ -29,13 +29,13 @@ void moveable::setposition(variant v) {
 	}
 }
 
-void moveable::setmovement(point v) {
+void moveable::setmovement(point v, unsigned stamp) {
 	start_position = position;
 	target_position = v;
-	start_date = game.getround();
+	start_date = stamp;
 }
 
-bool moveable::moving(int velocity) {
+bool moveable::moving(int velocity, unsigned stamp) {
 	if(!ismoving())
 		return false;
 	long maximum = distance(start_position, target_position);
@@ -43,7 +43,7 @@ bool moveable::moving(int velocity) {
 		position = target_position;
 		return false;
 	}
-	long passed_time = game.getround() - start_date;
+	long passed_time = stamp - start_date;
 	long current = velocity * passed_time / datetime::mpd;
 	if(current >= maximum)
 		position = target_position;

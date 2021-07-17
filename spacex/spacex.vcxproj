@@ -192,6 +192,7 @@
     <ClCompile Include="settlement.cpp" />
     <ClCompile Include="ship.cpp" />
     <ClCompile Include="size.cpp" />
+    <ClCompile Include="spaceunit.cpp" />
     <ClCompile Include="squad.cpp" />
     <ClCompile Include="stringbuilder.cpp" />
     <ClCompile Include="surface_serial.cpp" />

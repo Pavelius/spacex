@@ -336,9 +336,7 @@ static void status_panel() {
 	x1 = status(x1, y1, 64, game.get(Credits), "Ваши кредиты");
 }
 
-void shipi::paint() const {
-	auto x = getposition().x;
-	auto y = getposition().y;
+void shipi::paint(int x, int y) const {
 	auto r = 2;
 	auto old_font = font;
 	auto old_fore = fore;
@@ -381,6 +379,10 @@ void systemi::paint() const {
 		hilite_object = this;
 }
 
+void spaceunit::paint() const {
+	ship->paint(getposition().x, getposition().y);
+}
+
 static void static_image() {
 	if(background_bitmap)
 		image(0, 0, gres(background_bitmap, "art/background"), 0, 0);
@@ -388,36 +390,8 @@ static void static_image() {
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
 }
 
-static void paint_object(variant v) {
-	planeti* pn = v;
-	if(pn)
-		pn->paint();
-	systemi* ps = v;
-	if(ps)
-		ps->paint();
-	shipi* pp = v;
-	if(pp)
-		pp->paint();
-}
-
-static void paint_objects(const variants& objects) {
-	for(auto v : objects)
-		paint_object(v);
-}
-
 static void intro_background() {
 	static_image();
-	variants objects;
-	auto player = game.getplayer();
-	if(!player)
-		return;
-	systemi* system = player->parent;
-	if(system) {
-		objects.add(system);
-		objects.addplanets(system);
-		objects.addships(system, {}, 0);
-	}
-	paint_objects(objects);
 	status_panel();
 }
 
@@ -462,9 +436,11 @@ void play_area() {
 }
 
 void draw::setbackground(fnevent proc) {
-	if(!proc)
-		proc = intro_background;
 	background = proc;
+}
+
+fnevent draw::getbackground() {
+	return background;
 }
 
 void draw::setbitmap(const char* id) {
@@ -492,28 +468,31 @@ static void answer_button(int x, int& y, long id, const char* string, unsigned k
 		execute(breakparam, id);
 }
 
-void gamei::spaceflight() {
+void spaceunit::wait() {
 	draw::setbitmap("space2");
-	while(ismodal()) {
-		background();
+	while(ismoving() && ismodal()) {
+		static_image();
+		if(background)
+			background();
 		variant_tips();
 		domodal();
 		control_standart();
 		if(hot.key == InputTimer)
-			game.maketurn();
+			moveall();
 	}
 }
 
-void gamei::groundplay() {
-	auto planet = getplayer()->getplanet();
-	draw::setbitmap(planet->getbackground());
+void gamei::play(fnevent heartbreak) {
 	while(ismodal()) {
-		background();
+		static_image();
+		if(background)
+			background();
+		status_panel();
 		variant_tips();
 		domodal();
 		control_standart();
 		if(hot.key == InputTimer)
-			game.maketurn();
+			heartbreak();
 	}
 }
 
@@ -522,7 +501,10 @@ long answers::choosev(const char* title, const char* cancel_text, bool interacti
 	if(!interactive)
 		return random();
 	while(ismodal()) {
-		background();
+		static_image();
+		if(background)
+			background();
+		status_panel();
 		setwindow(x, y);
 		if(portraits)
 			windowp(x, y, gui.window_width, false, title, resid);

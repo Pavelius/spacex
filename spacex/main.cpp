@@ -18,15 +18,14 @@ static void test_ship() {
 	add_ship(Transporter, "Mars");
 	add_ship(Fighter, "Saturn");
 	add_ship(Interceptor, "Saturn");
-	draw::setnext(game.spaceflight);
+	bsdata<shipi>::elements[0].flyup();
 }
 
-void printcnf(const char* text);
-
-static void test_comsole() {
-	char temp[260]; io::file::getdir(temp, sizeof(temp));
-	printcnf(temp);
-	printcnf("\n");
+static void test_battle() {
+	spaceunit::cleanup();
+	spaceunit::add(bsdata<shipi>::elements + 2, true);
+	spaceunit::add(bsdata<shipi>::elements + 0, false);
+	spaceunit::startbattle();
 }
 
 int main() {
@@ -35,7 +34,7 @@ int main() {
 		return -1;
 	draw::initialize();
 	test_ship();
-	test_comsole();
+	test_battle();
 	draw::application();
 	return 0;
 }

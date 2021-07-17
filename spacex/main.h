@@ -59,6 +59,7 @@ enum protoship_s : unsigned char {
 };
 enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
+	GoingClose, GoingAway,
 };
 enum slot_s : unsigned char {
 	SlotGun, SlotLaser, SlotRocket,
@@ -100,6 +101,7 @@ public:
 	constexpr variant_s	getkind() const { return (variant_s)c[3]; }
 	const char*			getname() const;
 	constexpr int		getvalue() const { return u & 0xFFFFFF; }
+	void				paint() const;
 };
 struct varianta {
 	short unsigned		start;
@@ -227,8 +229,10 @@ struct systemi {
 };
 struct variants : adat<variant, 128> {
 	void				addships(variant vs, point fp, int r);
+	void				addspaceunits();
 	void				addplanets(variant vs);
 	variant				choose(const char* title, bool interactive) const;
+	void				paint() const;
 };
 struct objectable : adat<object, 32> {
 };
@@ -245,8 +249,8 @@ class moveable {
 public:
 	point				getposition() const { return position; }
 	bool				ismoving() const;
-	bool				moving(int velocity);
-	void				setmovement(point v);
+	bool				moving(int velocity, unsigned stamp);
+	void				setmovement(point v, unsigned start_date);
 	void				setposition(point v);
 	void				setposition(variant v);
 	void				stop();
@@ -284,7 +288,8 @@ struct shipi : statable, moveable, waitable, orderable {
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);
-	void				paint() const;
+	void				paint(int x, int y) const;
+	void				paint() const { paint(getposition().x, getposition().y); }
 	void				setcourse(bool interactive);
 	void				shoot(object& weapon, shipi& enemy);
 };
@@ -314,15 +319,36 @@ struct guii {
 	void				initialize();
 };
 class spaceunit : public moveable {
+	static unsigned		animation_stamp;
 	shipi*				ship;
+	shipi*				target;
 	char				range;
+	bool				aggressor;
 public:
-	constexpr spaceunit(shipi* p) : ship(ship), range(0) {}
-	constexpr spaceunit() : spaceunit(0) {}
-	constexpr operator shipi*() { return ship; }
+	static const variant_s kind = Spaceunit;
+	constexpr spaceunit() : moveable(), ship(0), target(0), range(0), aggressor(false) {}
+	constexpr explicit operator bool() const { return ship != 0; }
+	static void			add(shipi* p, bool aggressor);
+	void				apply(variant v, bool interactive);
+	static void			battle();
+	variant				chooseaction(bool interactive) const;
+	static void			cleanup();
+	void				clear();
+	bool				isaggressor() const { return aggressor; }
+	bool				isplayer() const { return ship->isplayer(); }
 	int					getrange() const { return range; }
 	shipi*				getship() { return ship; }
-	void				setrange(int v) { range = v; }
+	shipi*				gettarget() { return target; }
+	void				maketurn();
+	static void			moveall();
+	void				paint() const;
+	void				setagressor(bool v) { aggressor = v; }
+	void				setrange(int v);
+	void				settarget(shipi* v) { target = v; }
+	void				shoot(spaceunit& enemy);
+	static void			startbattle();
+	void				wait();
+	static void			waitall();
 };
 class gamei : public resourceable {
 	unsigned			round;
@@ -331,17 +357,17 @@ public:
 	datetime			getdate() const { return round; }
 	static shipi*		getplayer();
 	unsigned			getround() const { return round; }
-	static void			groundplay();
-	void				maketurn();
+	static void			passhour();
 	void				passtime(int days);
+	static void			play(fnevent timer);
 	static bool			readf(const char* url);
 	static result_s		roll(int dices);
-	static void			spaceflight();
 };
 extern gamei			game;
 namespace draw {
 void					application();
 void					initialize();
+fnevent					getbackground();
 void					setbackground(fnevent pv);
 void					setbitmap(const char* id);
 void					setnext(fnevent pv);
