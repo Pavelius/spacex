@@ -123,7 +123,7 @@ void shipi::setcourse(bool interactive) {
 	variants objects;
 	objects.addplanets(system);
 	objects.remove(getplanet());
-	planeti* target = objects.choose(0, interactive);
+	planeti* target = objects.choose(0, interactive, false);
 	if(!target)
 		return;
 	setmovement(target->position, game.getround());
@@ -161,4 +161,8 @@ void shipi::shoot(object& weapon, shipi& enemy) {
 }
 
 void shipi::hit(damagei& damage) {
+	auto value = damage.roll() - get(Armor);
+	if(value < 1)
+		value = 1;
+	set(HullDamage, get(HullDamage) + value);
 }

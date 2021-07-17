@@ -7,5 +7,6 @@ BSDATA(actioni) = {
 	{"SetCourse", "Установить курс"},
 	{"GoingClose", "Приблизиться ближе"},
 	{"GoingAway", "Отдалиться от гущи сражения"},
+	{"ShootAll", "Стрелять из всех орудий"},
 };
-assert_enum(actioni, GoingAway)
+assert_enum(actioni, ShootAll)

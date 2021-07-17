@@ -5,7 +5,7 @@
 
 BSDATA(varianti) = {{""},
 	{"action", bsdata<actioni>::source_ptr, NMHX(actioni)},
-	{"equipment", bsdata<equipmenti>::source_ptr, NMHX(actioni)},
+	{"equipment", bsdata<equipmenti>::source_ptr, NMHX(equipmenti)},
 	{"fraction", bsdata<fractioni>::source_ptr, NMHX(fractioni)},
 	{"location", bsdata<locationi>::source_ptr, NMHX(locationi)},
 	{"planet", bsdata<planeti>::source_ptr, NMHX(planeti)},
@@ -14,8 +14,9 @@ BSDATA(varianti) = {{""},
 	{"spaceunit", bsdata<spaceunit>::source_ptr},
 	{"squad", bsdata<squadi>::source_ptr},
 	{"system", bsdata<systemi>::source_ptr, NMHX(systemi)},
+	{"visual", bsdata<visuali>::source_ptr},
 };
-assert_enum(varianti, System)
+assert_enum(varianti, Visual)
 
 variant::variant(const void* v) : u(0) {
 	for(auto& e : bsdata<varianti>()) {
@@ -53,8 +54,9 @@ const char* variant::getname() const {
 void variant::paint() const {
 	switch(getkind()) {
 	case Planet: bsdata<planeti>::elements[getvalue()].paint(); break;
-	case System: bsdata<systemi>::elements[getvalue()].paint(); break;
 	case Ship: bsdata<shipi>::elements[getvalue()].paint(); break;
 	case Spaceunit: bsdata<spaceunit>::elements[getvalue()].paint(); break;
+	case System: bsdata<systemi>::elements[getvalue()].paint(); break;
+	case Visual: bsdata<visuali>::elements[getvalue()].paint(); break;
 	}
 }

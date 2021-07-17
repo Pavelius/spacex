@@ -64,7 +64,6 @@ const codepages						code = CP1251;
 //
 bool								equal(const char* s1, const char* s2);
 int									getdigitscount(unsigned number); // Get digits count of number. For example if number=100, result be 3.
-template<class T> const char*		getstr(T e); // Template to return string of small class
 bool								ischa(unsigned u); // is alphabetical character?
 inline bool							isnum(unsigned u) { return u >= '0' && u <= '9'; } // is numeric character?
 int									isqrt(const int x); // Return aquare root of 'x'
@@ -77,7 +76,6 @@ float								sqrt(const float x); // Return aquare root of 'x'
 inline const char*					skipsp(const char* p) { if(p) while(*p == ' ' || *p == '\t') p++; return p; }
 inline const char*					skipspcr(const char* p) { if(p) while(*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') p++; return p; }
 const char*							skipcr(const char* p);
-//int								sz2num(const char* p1, const char** pp1 = 0);
 void								szchange(char* p, char s1, char s2);
 void								szencode(char* output, int output_count, codepages output_code, const char* input, int input_count, codepages input_code);
 unsigned							szget(const char** input, codepages page = metrics::code);
@@ -164,7 +162,6 @@ struct adat {
 	void							remove(int index, int remove_count = 1) { if(index < 0) return; if(index<int(count - 1)) memcpy(data + index, data + index + 1, sizeof(data[0]) * (count - index - 1)); count--; }
 	void							remove(const T t) { remove(indexof(t), 1); }
 };
-typedef adat<void*, 64>				reflist;
 // Abstract flag data bazed on enumerator
 template<typename T, typename DT = unsigned>
 class cflags {

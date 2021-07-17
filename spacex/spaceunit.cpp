@@ -57,6 +57,8 @@ void spaceunit::setrange(int v) {
 }
 
 void spaceunit::shoot(spaceunit& enemy) {
+	object weapon(Laser);
+	getship()->shoot(weapon, *enemy.getship());
 }
 
 void spaceunit::startbattle() {
@@ -93,21 +95,38 @@ static void promt(answers& an, variant v) {
 	}
 }
 
+variants spaceunit::select(bool agressive) const {
+	variants result;
+	result.addspaceunits();
+	result.matchaggressive(agressive);
+	return result;
+}
+
 variant spaceunit::chooseaction(bool interactive) const {
 	answers an;
 	if(getrange() > 0)
 		promt(an, GoingClose);
 	if(getrange() < maximum_range)
 		promt(an, GoingAway);
+	if(select(!isaggressor()))
+		promt(an, ShootAll);
 	return an.choosev(0, 0, interactive, 0);
 }
 
 void spaceunit::apply(variant v, bool interactive) {
+	variant result;
 	switch(v.getkind()) {
 	case Action:
 		switch(v.getvalue()) {
 		case GoingClose: setrange(getrange()-1); break;
 		case GoingAway: setrange(getrange()+1); break;
+		case ShootAll:
+			result = select(!isaggressor()).choose(0, interactive, true);
+			if(result) {
+				spaceunit* p = result;
+				shoot(*p);
+			}
+			break;
 		}
 		break;
 	}

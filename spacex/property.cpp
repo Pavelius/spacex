@@ -10,6 +10,7 @@ BSDATAC(planeti, 1024);
 BSDATAC(shipi, 1024);
 BSDATAC(systemi, 256);
 BSDATAC(spaceunit, 32);
+BSDATAC(visuali, 8);
 
 BSLNK(fraction_s, fractioni)
 BSLNK(landscape_s, landscapei)

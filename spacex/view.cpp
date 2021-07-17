@@ -383,6 +383,9 @@ void spaceunit::paint() const {
 	ship->paint(getposition().x, getposition().y);
 }
 
+void visuali::paint() const {
+}
+
 static void static_image() {
 	if(background_bitmap)
 		image(0, 0, gres(background_bitmap, "art/background"), 0, 0);

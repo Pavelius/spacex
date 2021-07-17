@@ -8,7 +8,7 @@
 
 enum variant_s : unsigned char {
 	NoVariant,
-	Action, Equipment, Fraction, Location, Planet, Size, Ship, Spaceunit, Squad, System,
+	Action, Equipment, Fraction, Location, Planet, Size, Ship, Spaceunit, Squad, System, Visual
 };
 enum resource_s : unsigned char {
 	Credits, Ore, Food, Medical, Drugs,
@@ -59,7 +59,7 @@ enum protoship_s : unsigned char {
 };
 enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
-	GoingClose, GoingAway,
+	GoingClose, GoingAway, ShootAll,
 };
 enum slot_s : unsigned char {
 	SlotGun, SlotLaser, SlotRocket,
@@ -86,6 +86,7 @@ public:
 	constexpr variant(unsigned char t, unsigned char n) : c{n, 0, 0, t} {}
 	constexpr variant(int u) : u(u) {}
 	constexpr variant(action_s v) : variant(Action, v) {}
+	constexpr variant(equipment_s v) : variant(Equipment, v) {}
 	variant(const char* v);
 	variant(const void* v);
 	constexpr operator int() const { return u; }
@@ -141,6 +142,8 @@ class object : public variant {
 	unsigned char		used;
 	unsigned char		weight;
 public:
+	constexpr object(variant v) : variant(v), power(0), origin(Independed), variation(0), used(0), weight(0) {}
+	constexpr object() : object(NoVariant) {}
 	int					getcount() const { return 1; }
 	damagei				getdamage() const;
 	int					getpower() const { return power; }
@@ -231,7 +234,8 @@ struct variants : adat<variant, 128> {
 	void				addships(variant vs, point fp, int r);
 	void				addspaceunits();
 	void				addplanets(variant vs);
-	variant				choose(const char* title, bool interactive) const;
+	variant				choose(const char* title, bool interactive, bool chooseone) const;
+	void				matchaggressive(bool keep);
 	void				paint() const;
 };
 struct objectable : adat<object, 32> {
@@ -285,6 +289,7 @@ struct shipi : statable, moveable, waitable, orderable {
 	int					getvelocity() const;
 	void				hit(damagei& damage);
 	void				investigate();
+	bool				isalive() const { return get(HullDamage) < get(Hull); }
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);
@@ -301,6 +306,9 @@ struct troopi : public variant {
 	char				count;
 	char				killed;
 	char				wounded;
+};
+struct visuali : variant, moveable {
+	void				paint() const;
 };
 struct fractioni {
 	const char*			id;
@@ -332,6 +340,7 @@ public:
 	void				apply(variant v, bool interactive);
 	static void			battle();
 	variant				chooseaction(bool interactive) const;
+	spaceunit*			chooseenemy(bool interactive) const;
 	static void			cleanup();
 	void				clear();
 	bool				isaggressor() const { return aggressor; }
@@ -342,6 +351,7 @@ public:
 	void				maketurn();
 	static void			moveall();
 	void				paint() const;
+	variants			select(bool agressive) const;
 	void				setagressor(bool v) { aggressor = v; }
 	void				setrange(int v);
 	void				settarget(shipi* v) { target = v; }
