@@ -2,17 +2,40 @@
 
 struct shipnamei {
 	const char*		name;
+	fractionf		fractions;
 };
 BSDATA(shipnamei) = {
-	{"Бетси"},
-	{"Клайд"},
-	{"Роланд"},
-	{"Росинант"},
-	{"Люк"},
-	{"Бенжамин"},
-	{"Гротеск"},
-	{"Скупуле"},
+	{"Баракуда", {Independed}},
+	{"Джастин", {Independed}},
+	{"Клондайк", {Independed}},
+	{"Каракатица", {Independed}},
+	{"Кобра", {Independed}},
+	{"Калибри", {Independed}},
+	{"Бенжамин", {Corporation, Confideration}},
+	{"Бетси", {Pirates}},
+	{"Гадюка", {Pirates}},
+	{"Гротеск", {Corporation, Confideration}},
+	{"Клайд", {Corporation, Confideration}},
+	{"Кузнецов", {Corporation, Confideration}},
+	{"Люк", {Corporation, Confideration}},
+	{"Мамба", {Pirates}},
+	{"Менск", {Corporation, Confideration}},
+	{"Морах", {Corporation, Confideration, Pirates}},
+	{"Норад", {Corporation, Confideration, Rebels}},
+	{"Питон", {Pirates}},
+	{"Роланд", {Corporation, Confideration}},
+	{"Росинант", {Corporation, Confideration}},
+	{"Свобода", {Rebels, Pirates, Confideration}},
+	{"Скупуле", {Corporation, Confideration}},
+	{"Уж", {Pirates}},
+	{"Хенкали", {Corporation, Confideration}},
+	{"Хэнкок", {Corporation, Confideration}},
 };
+
+static void all_visible_ships(variants& objects, const systemi* system, const shipi* player) {
+	objects.addships(system);
+	objects.matchships(player->getposition(), system_visibility_radius, true, true);
+}
 
 static void paint_spaceships() {
 	variants objects;
@@ -23,8 +46,7 @@ static void paint_spaceships() {
 	if(system) {
 		objects.add(system);
 		objects.addplanets(system);
-		objects.addships(system);
-		objects.matchships(player->getposition(), system_visibility_radius, true, true);
+		all_visible_ships(objects, system, player);
 		objects.paint();
 	}
 }
@@ -33,8 +55,12 @@ bool shipi::isplayer() const {
 	return game.getplayer() == this;
 }
 
-const char* shipi::getname() const {
+const char*	shipi::getkindname() const {
 	return bsdata<protoshipi>::elements[type].name;
+}
+
+const char* shipi::getname() const {
+	return bsdata<shipnamei>::elements[name].name;
 }
 
 int shipi::getvelocity() const {
@@ -70,7 +96,7 @@ static void promt(answers& an, variant v) {
 	}
 }
 
-variant shipi::chooseaction(bool interactive) {
+variant shipi::chooseaction(bool interactive, bool paused) {
 	answers an;
 	planeti* planet = parent;
 	if(planet) {
@@ -84,6 +110,13 @@ variant shipi::chooseaction(bool interactive) {
 		if(getplanet())
 			promt(an, Landing);
 		promt(an, SetCourse);
+		variants objects;
+		all_visible_ships(objects, system, this);
+		objects.remove(this);
+		if(interactive) {
+			if(objects)
+				promt(an, SetConnection);
+		}
 	}
 	if(!interactive && isorder()) {
 		auto v = getorder();
@@ -92,7 +125,30 @@ variant shipi::chooseaction(bool interactive) {
 			return v;
 		}
 	}
+	if(paused)
+		return an.choosev(0, "Продолжить", interactive, 0);
 	return an.choosev(0, 0, interactive, 0);
+}
+
+void shipi::chatting(shipi* opponent, bool interactive) {
+	char temp[1024]; stringbuilder sb(temp); answers an;
+	sb.add("Капитан корабля [%1] на связи. Чем могу быть полезен?", opponent->getname());
+	an.add(2, "Вам необходимо сменить курс.");
+	auto v = an.choosev(temp, "Ничего, сэр. Просто проверка связи.", interactive, 0);
+	if(!v)
+		return;
+	game.message(interactive, "К сожелению вынужден отказать в вашем запросе. Конец связи.", 0);
+}
+
+void shipi::setconnection(bool interactive) {
+	systemi* system = parent;
+	if(!system)
+		return;
+	variants objects;
+	all_visible_ships(objects, system, this);
+	objects.remove(this);
+	shipi* opponent = objects.choose(0, interactive, true);
+	chatting(opponent, interactive);
 }
 
 void shipi::landing() {
@@ -138,6 +194,7 @@ void shipi::apply(variant v, bool interactive) {
 	switch(v.getkind()) {
 	case Action:
 		switch(v.getvalue()) {
+		case SetConnection: setconnection(interactive); break;
 		case SetCourse: setcourse(interactive); break;
 		case Landing: landing(); break;
 		case Flyup: flyup(); break;
@@ -152,7 +209,7 @@ void shipi::maketurn(bool interactive) {
 		return;
 	if(moving(getvelocity(), game.getround()))
 		return;
-	apply(chooseaction(interactive), interactive);
+	apply(chooseaction(interactive, false), interactive);
 }
 
 void shipi::shoot(object& weapon, shipi& enemy) {
@@ -183,6 +240,11 @@ void shipi::clear() {
 	memset(this, 0, sizeof(*this));
 }
 
+static short unsigned random_name() {
+	auto count = sizeof(bsdata<shipnamei>::elements) / sizeof(bsdata<shipnamei>::elements[0]);
+	return rand() % count;
+}
+
 void shipi::create(protoship_s type) {
 	auto& e = bsdata<protoshipi>::elements[type];
 	clear();
@@ -192,6 +254,7 @@ void shipi::create(protoship_s type) {
 	set(Crew, radnomv(e.crew));
 	for(auto v : e.equipments)
 		add(v);
+	name = random_name();
 }
 
 bool shipi::iseffective(int range) const {

@@ -301,16 +301,28 @@ static void uptop_tooltips() {
 	tooltips_point.y = gui.border * 2;
 }
 
-static int status(int x, int y, int width, const char* format, const char* title) {
+static int status(int x, int y, int width, const char* format, const char* title, fnevent proc = 0, unsigned key = 0) {
 	rect rc = {x - 1, y - 1, x + width + 1, y + 1 + texth()};
-	shadow(rc, colors::form);
+	auto hilite = ishilite(rc);
+	if(proc) {
+		auto pressed = hot.pressed;
+		auto need_execute = false;
+		shadow(rc, hilite ? (pressed ? colors::button.darken() : colors::button) : colors::form);
+		if(key && hot.key == key)
+			need_execute = true;
+		if(hot.key == MouseLeft && hilite && !hot.pressed)
+			need_execute = true;
+		if(need_execute)
+			execute(proc);
+	} else
+		shadow(rc, colors::form);
 	text(x + (width - textw(format)) / 2, y, format);
-	if(ishilite(rc)) {
+	if(hilite) {
 		uptop_tooltips();
 		stringbuilder sb(tooltips_text);
 		sb.add(title);
 	}
-	return x + width + 2 + gui.border;
+	return x + width + gui.border;
 }
 
 static int status(int x, int y, int width, int value, const char* title) {
@@ -327,13 +339,27 @@ static void variant_tips() {
 	}
 }
 
-static void status_panel() {
-	rect rc = {0, getheight() - texth() - gui.border * 2, 200 + gui.border * 2, getheight()};
+static void show_menu() {
+	auto player = game.getplayer();
+	if(!player)
+		return;
+	auto v = player->chooseaction(true, true);
+	if(v)
+		player->apply(v, true);
+}
+
+static void status_panel(bool allow_pause) {
+	const int button_width = 64;
+	rect rc = {0, getheight() - texth() - gui.border * 2, 184 + gui.border * 3, getheight()};
+	if(allow_pause)
+		rc.x2 += button_width + gui.border;
 	shadow(rc, colors::form);
 	auto x1 = rc.x1 + gui.border;
 	auto y1 = rc.y1 + gui.border;
 	x1 = status(x1, y1, 120, game.getdate().getname(), "Текущая дата");
 	x1 = status(x1, y1, 64, game.get(Credits), "Ваши кредиты");
+	if(allow_pause)
+		x1 = status(x1, y1, button_width, "Пауза", "Остановить игру и выполнить различный действия", show_menu, KeySpace);
 }
 
 void shipi::paint(int x, int y) const {
@@ -393,11 +419,6 @@ static void static_image() {
 		image(0, 0, gres(background_bitmap, "art/background"), 0, 0);
 	else
 		rectf({0, 0, getwidth(), getheight()}, colors::gray);
-}
-
-static void intro_background() {
-	static_image();
-	status_panel();
 }
 
 static void render_map() {
@@ -492,7 +513,7 @@ void gamei::play(fnevent heartbreak) {
 		static_image();
 		if(background)
 			background();
-		status_panel();
+		status_panel(true);
 		variant_tips();
 		domodal();
 		control_standart();
@@ -509,7 +530,7 @@ long answers::choosev(const char* title, const char* cancel_text, bool interacti
 		static_image();
 		if(background)
 			background();
-		status_panel();
+		status_panel(false);
 		setwindow(x, y);
 		if(portraits)
 			windowp(x, y, gui.window_width, false, title, resid);

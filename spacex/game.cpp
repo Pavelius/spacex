@@ -71,3 +71,9 @@ int	gamei::random(int v1, int v2, int c) {
 	}
 	return result;
 }
+
+void gamei::message(bool interactive, const char* format, const char* resid) {
+	answers an;
+	an.add(1, "Продолжить");
+	an.choosev(format, 0, true, resid);
+}

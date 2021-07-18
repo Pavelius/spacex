@@ -61,6 +61,7 @@ enum protoship_s : unsigned char {
 enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
 	GoingClose, GoingAway, ShootAll,
+	SetConnection,
 };
 const int system_visibility_radius = 64;
 typedef std::initializer_list<const char*> stringa;
@@ -220,6 +221,7 @@ struct actioni {
 struct nameable {
 	const char*			id;
 	const char*			name;
+	const char*			getname() const { return name; }
 };
 struct planeti : nameable {
 	static const variant_s kind = Planet;
@@ -264,6 +266,7 @@ class moveable {
 	unsigned			start_date;
 public:
 	point				getposition() const { return position; }
+	point				getdestination() const { return target_position; }
 	bool				ismoving() const;
 	bool				moving(int velocity, unsigned stamp);
 	void				setmovement(point v, unsigned start_date);
@@ -278,7 +281,6 @@ struct protoshipi {
 	short				hull;
 	short				speed;
 	equipmenta			equipments;
-	fraction_s			manufactor;
 };
 class orderable : adat<variant, 2> {
 public:
@@ -293,19 +295,22 @@ struct equipmentq : adat<object*, 128> {
 class shipi : public statable, public moveable, public waitable, public orderable {
 	statable			basic;
 	protoship_s			type;
-	size_s				size;
+	fraction_s			fraction;
 	variant				parent;
 	objectable			objects;
+	short unsigned		name, name_index;
 public:
 	static const variant_s kind = Ship;
 	constexpr explicit operator bool() const { return parent; }
 	void				add(const object& v);
 	void				apply(variant v, bool interactive);
+	void				chatting(shipi* opponent, bool interactive);
 	void				clear();
 	void				create(protoship_s type);
-	variant				chooseaction(bool interactive);
+	variant				chooseaction(bool interactive, bool paused);
 	void				flyup();
 	void				getinfo(stringbuilder& sb) const;
+	const char*			getkindname() const;
 	variant				getlocation() const { return parent; }
 	const char*			getname() const;
 	planeti*			getplanet() const;
@@ -321,6 +326,7 @@ public:
 	void				maketurn(bool interactive);
 	void				paint(int x, int y) const;
 	void				paint() const { paint(getposition().x, getposition().y); }
+	void				setconnection(bool interactive);
 	void				setcourse(bool interactive);
 	void				setlocation(variant v) { parent = v; }
 	void				shoot(object& weapon, shipi& enemy);
@@ -394,6 +400,7 @@ public:
 	datetime			getdate() const { return round; }
 	static shipi*		getplayer();
 	unsigned			getround() const { return round; }
+	static void			message(bool interactive, const char* format, const char* resid);
 	static void			passhour();
 	void				passtime(int days);
 	static void			play(fnevent timer);
