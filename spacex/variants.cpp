@@ -65,3 +65,23 @@ void variants::paint() const {
 	for(auto v : *this)
 		v.paint();
 }
+
+bool variants::operator==(const variants& v) const {
+	if(count != v.count)
+		return false;
+	for(unsigned i = 0; i < count; i++) {
+		if(data[i] != v.data[i])
+			return false;
+	}
+	return true;
+}
+
+bool variants::operator!=(const variants& v) const {
+	if(count != v.count)
+		return true;
+	for(unsigned i = 0; i < count; i++) {
+		if(data[i] != v.data[i])
+			return true;
+	}
+	return false;
+}

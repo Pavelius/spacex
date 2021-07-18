@@ -357,7 +357,9 @@ static void status_panel(bool allow_pause) {
 	auto x1 = rc.x1 + gui.border;
 	auto y1 = rc.y1 + gui.border;
 	x1 = status(x1, y1, 120, game.getdate().getname(), "Текущая дата");
-	x1 = status(x1, y1, 64, game.get(Credits), "Ваши кредиты");
+	auto player = game.getplayer();
+	if(player)
+		x1 = status(x1, y1, 64, player->get(Credits), "Ваши кредиты");
 	if(allow_pause)
 		x1 = status(x1, y1, button_width, "Пауза", "Остановить игру и выполнить различный действия", show_menu, KeySpace);
 }

@@ -132,8 +132,10 @@ variant shipi::chooseaction(bool interactive, bool paused) {
 
 void shipi::chatting(shipi* opponent, bool interactive) {
 	char temp[1024]; stringbuilder sb(temp); answers an;
-	sb.add("Капитан корабля [%1] на связи. Чем могу быть полезен?", opponent->getname());
-	an.add(2, "Вам необходимо сменить курс.");
+	sb.adds("Капитан корабля [%1] на связи.", opponent->getname());
+	sb.adds("Чем могу быть полезен?", opponent->getname());
+	an.add(1, "Вам необходимо сменить курс.");
+	an.add(2, "Требую отключить системы защиты и передать весь ваш груз нам. В случае неповеновения мы откроем огонь.");
 	auto v = an.choosev(temp, "Ничего, сэр. Просто проверка связи.", interactive, 0);
 	if(!v)
 		return;
@@ -282,4 +284,11 @@ bool shipi::is(equipment_s v) const {
 			return true;
 	}
 	return false;
+}
+
+int shipi::get(resource_s v) const {
+	switch(v) {
+	case Credits: return credits;
+	default: return 0;
+	}
 }

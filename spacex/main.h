@@ -99,6 +99,8 @@ public:
 	variant(const void* v);
 	constexpr operator int() const { return u; }
 	constexpr explicit operator bool() const { return u != 0; }
+	constexpr bool operator==(const variant& v) const { return u == v.u; }
+	constexpr bool operator!=(const variant& v) const { return u != v.u; }
 	template<class T> operator T*() const { return (T*)((T::kind == c[3]) ? getpointer() : 0); }
 	void				act(const char* format, ...) const;
 	void				actv(stringbuilder& sb, const char* format, const char* format_param) const;
@@ -223,7 +225,7 @@ struct nameable {
 	const char*			name;
 	const char*			getname() const { return name; }
 };
-struct planeti : nameable {
+struct planeti : nameable, resourceable {
 	static const variant_s kind = Planet;
 	fraction_s			fraction;
 	point				position;
@@ -244,6 +246,8 @@ struct systemi {
 	void				paint() const;
 };
 struct variants : adat<variant, 128> {
+	bool operator==(const variants& v) const;
+	bool operator!=(const variants& v) const;
 	void				addships(variant vs);
 	void				addspaceunits();
 	void				addplanets(variant vs);
@@ -298,6 +302,7 @@ class shipi : public statable, public moveable, public waitable, public orderabl
 	fraction_s			fraction;
 	variant				parent;
 	objectable			objects;
+	unsigned			credits;
 	short unsigned		name, name_index;
 public:
 	static const variant_s kind = Ship;
@@ -309,6 +314,8 @@ public:
 	void				create(protoship_s type);
 	variant				chooseaction(bool interactive, bool paused);
 	void				flyup();
+	int					get(resource_s v) const;
+	int					get(stat_s v) const { return statable::get(v); }
 	void				getinfo(stringbuilder& sb) const;
 	const char*			getkindname() const;
 	variant				getlocation() const { return parent; }
@@ -393,9 +400,8 @@ public:
 	void				wait();
 	static void			waitall();
 };
-class gamei : public resourceable {
+class gamei {
 	unsigned			round;
-	unsigned			credits;
 public:
 	datetime			getdate() const { return round; }
 	static shipi*		getplayer();
