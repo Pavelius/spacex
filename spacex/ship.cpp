@@ -23,7 +23,8 @@ static void paint_spaceships() {
 	if(system) {
 		objects.add(system);
 		objects.addplanets(system);
-		objects.addships(system, {}, 0);
+		objects.addships(system);
+		objects.matchships(player->getposition(), system_visibility_radius, true, true);
 		objects.paint();
 	}
 }
@@ -202,17 +203,6 @@ bool shipi::iseffective(int range) const {
 	return false;
 }
 
-bool shipi::iseffective(int range, int enemy_range) const {
-	for(auto v : objects) {
-		if(!v)
-			continue;
-		if(!v.iseffective(range) || !v.iseffective(enemy_range + 3))
-			continue;
-		return true;
-	}
-	return false;
-}
-
 void shipi::getweapons(equipmentq& result, int range) {
 	for(auto& e : objects) {
 		if(!e)
@@ -221,4 +211,12 @@ void shipi::getweapons(equipmentq& result, int range) {
 			continue;
 		result.add(&e);
 	}
+}
+
+bool shipi::is(equipment_s v) const {
+	for(auto e : objects) {
+		if(e.getkind() == Equipment && e.getvalue() == v)
+			return true;
+	}
+	return false;
 }

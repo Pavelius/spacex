@@ -22,6 +22,7 @@ enum stat_s : unsigned char {
 };
 enum equipment_s : unsigned char {
 	MachineGun, Laser, Rocket,
+	Transponder,
 };
 enum sduad_s : unsigned char {
 	Civilians, Scientists, Technics,
@@ -61,15 +62,11 @@ enum action_s : unsigned char {
 	Landing, Investigate, Flyup, SetCourse,
 	GoingClose, GoingAway, ShootAll,
 };
-enum slot_s : unsigned char {
-	SlotGun, SlotLaser, SlotRocket,
-	SlotEngine,
-};
+const int system_visibility_radius = 64;
 typedef std::initializer_list<const char*> stringa;
 typedef std::initializer_list<equipment_s> equipmenta;
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
-typedef cflags<slot_s> slotf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
 class shipi;
@@ -169,7 +166,6 @@ struct equipmenti {
 	static const variant_s kind = Equipment;
 	const char*			id;
 	const char*			name;
-	slotf				slots;
 	damagei				damage;
 	short				weight[2];
 	rangei				range;
@@ -246,11 +242,12 @@ struct systemi {
 	void				paint() const;
 };
 struct variants : adat<variant, 128> {
-	void				addships(variant vs, point fp, int r);
+	void				addships(variant vs);
 	void				addspaceunits();
 	void				addplanets(variant vs);
 	variant				choose(const char* title, bool interactive, bool chooseone) const;
 	void				matchaggressive(bool keep);
+	void				matchships(point fp, int r, bool keep, bool apply_transponder);
 	void				paint() const;
 };
 struct objectable : adat<object, 32> {
@@ -294,13 +291,13 @@ struct equipmentq : adat<object*, 128> {
 	void				matchef(variants& source, bool keep);
 };
 class shipi : public statable, public moveable, public waitable, public orderable {
-	static const variant_s kind = Ship;
 	statable			basic;
 	protoship_s			type;
 	size_s				size;
 	variant				parent;
 	objectable			objects;
 public:
+	static const variant_s kind = Ship;
 	constexpr explicit operator bool() const { return parent; }
 	void				add(const object& v);
 	void				apply(variant v, bool interactive);
@@ -316,9 +313,9 @@ public:
 	void				getweapons(equipmentq& result, int range);
 	void				hit(damagei& damage);
 	void				investigate();
+	bool				is(equipment_s v) const;
 	bool				isalive() const { return get(HullDamage) < get(Hull); }
 	bool				iseffective(int range) const;
-	bool				iseffective(int range, int enemy_range) const;
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);

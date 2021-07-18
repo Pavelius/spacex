@@ -54,6 +54,8 @@ void gamei::passhour() {
 }
 
 int	gamei::random(int v1, int v2, int c) {
+	if(!v2)
+		return v1;
 	auto result = -100;
 	for(auto i = iabs(c); i > 0; i--) {
 		auto v = xrand(v1, v2);

@@ -20,17 +20,27 @@ void variants::matchaggressive(bool keep) {
 	count = ps - data;
 }
 
-void variants::addships(variant vs, point fp, int r) {
+void variants::addships(variant vs) {
 	for(auto& e : bsdata<shipi>()) {
 		if(e.getlocation() != vs)
 			continue;
-		if(r) {
-			auto d = distance(fp, e.getposition());
-			if(d > r)
-				continue;
-		}
 		add(&e);
 	}
+}
+
+void variants::matchships(point fp, int r, bool keep, bool apply_transponder) {
+	auto ps = data;
+	for(auto v : *this) {
+		shipi* pu = v;
+		if(pu) {
+			auto d = distance(fp, pu->getposition());
+			auto allow = (d <= r) || (apply_transponder && pu->is(Transponder));
+			if(allow != keep)
+				continue;
+		}
+		*ps++ = v;
+	}
+	count = ps - data;
 }
 
 void variants::addplanets(variant vs) {

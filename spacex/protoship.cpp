@@ -8,7 +8,7 @@ BSDATA(protoshipi) = {
 	{"Ranger", "Рейнджер", 3, 250, 60, {MachineGun, Laser}, Confideration},
 	{"Interceptor", "Налетчик", 6, 250, 120, {MachineGun, MachineGun, Laser}, Pirates},
 	{"Battleship", "Штурмовик", 10, 450, 80, {MachineGun, MachineGun, Laser, Laser, Rocket}, Confideration},
-	{"Transporter", "Транспорт", 6, 450, 60, {MachineGun}, Confideration},
+	{"Transporter", "Транспорт", 6, 450, 60, {MachineGun, Transponder}, Confideration},
 	{"Cruiser", "Крейсер", 50, 600, 80, {MachineGun, Laser, Laser, Laser, Rocket, Rocket}, Confideration},
 	{"Carrier", "Авианосец", 50, 800, 50, {MachineGun, MachineGun, MachineGun}, Confideration},
 	{"Linkor", "Линкор", 100, 900, 40, {MachineGun, MachineGun, MachineGun, Laser, Laser, Laser, Rocket, Rocket, Rocket}, Confideration},

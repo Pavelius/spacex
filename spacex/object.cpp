@@ -3,7 +3,7 @@
 bool object::isweapon() const {
 	equipmenti* peq = *this;
 	if(peq)
-		return peq->slots.is(SlotGun) || peq->slots.is(SlotLaser) || peq->slots.is(SlotRocket);
+		return peq->damage.hits[0]!=0;
 	return false;
 }
 
@@ -44,7 +44,7 @@ void object::create(equipment_s type, fraction_s origin, int power) {
 	case Pirates:
 		weight = game.random(e.weight[0], e.weight[1], 2);
 	default:
-		weight = xrand(e.weight[0], e.weight[1]);
+		weight = game.random(e.weight[0], e.weight[1], 1);
 		break;
 	}
 }
