@@ -9,7 +9,7 @@ static systemi* find_system(const char* id) {
 static void add_ship(protoship_s type, const char* planet) {
 	auto p = bsdata<shipi>::add();
 	p->create(type);
-	p->parent = "Sun";
+	p->setlocation("Sun");
 	p->setposition(planet);
 }
 
@@ -36,7 +36,7 @@ int main() {
 		return -1;
 	draw::initialize();
 	test_ship();
-	test_battle();
+	//test_battle();
 	draw::application();
 	return 0;
 }

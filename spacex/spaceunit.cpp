@@ -111,7 +111,7 @@ variant spaceunit::chooseaction(bool interactive) const {
 	variants enemies = select(!isaggressor());
 	if(enemies) {
 		equipmentq weapons;
-		weapons.addweapon(const_cast<spaceunit*>(this)->getship(), getrange());
+		const_cast<spaceunit*>(this)->getship()->getweapons(weapons, getrange());
 		weapons.matchef(enemies, true);
 		if(weapons)
 			promt(an, ShootAll);

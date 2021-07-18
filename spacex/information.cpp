@@ -28,8 +28,7 @@ void systemi::getinfo(stringbuilder& sb) const {
 void shipi::getinfo(stringbuilder& sb) const {
 	header(sb, "Корпус", get(Hull) - get(HullDamage), get(Hull));
 	header(sb, "Скорость", get(Speed));
-	for(auto v : objects)
-		sb.addn(v.getname());
+	//header(sb, "Крус", get(Speed));
 }
 
 void variant::getinfo(stringbuilder& sb) const {

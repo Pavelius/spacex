@@ -1,25 +1,5 @@
 #include "main.h"
 
-void equipmentq::addweapon(shipi* p, int range, int range_enemy) {
-	for(auto& e : p->objects) {
-		if(!e)
-			continue;
-		if(!e.iseffective(range) || !e.iseffective(range_enemy))
-			continue;
-		add(&e);
-	}
-}
-
-void equipmentq::addweapon(shipi* p, int range) {
-	for(auto& e : p->objects) {
-		if(!e)
-			continue;
-		if(!e.iseffective(range))
-			continue;
-		add(&e);
-	}
-}
-
 void equipmentq::matchef(variants& source, bool keep) {
 	auto p = data;
 	for(auto pp : *this) {

@@ -22,7 +22,7 @@ void variants::matchaggressive(bool keep) {
 
 void variants::addships(variant vs, point fp, int r) {
 	for(auto& e : bsdata<shipi>()) {
-		if(e.parent != vs)
+		if(e.getlocation() != vs)
 			continue;
 		if(r) {
 			auto d = distance(fp, e.getposition());

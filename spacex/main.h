@@ -72,7 +72,7 @@ typedef cflags<fraction_s> fractionf;
 typedef cflags<slot_s> slotf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
-struct shipi;
+class shipi;
 class rangei {
 	unsigned char		value;
 public:
@@ -291,17 +291,16 @@ public:
 	void				removeorder() { remove(0, 1); }
 };
 struct equipmentq : adat<object*, 128> {
-	void				addweapon(shipi* p, int range);
-	void				addweapon(shipi* p, int range, int enemy_range);
 	void				matchef(variants& source, bool keep);
 };
-struct shipi : statable, moveable, waitable, orderable {
+class shipi : public statable, public moveable, public waitable, public orderable {
 	static const variant_s kind = Ship;
 	statable			basic;
 	protoship_s			type;
 	size_s				size;
 	variant				parent;
 	objectable			objects;
+public:
 	constexpr explicit operator bool() const { return parent; }
 	void				add(const object& v);
 	void				apply(variant v, bool interactive);
@@ -310,9 +309,11 @@ struct shipi : statable, moveable, waitable, orderable {
 	variant				chooseaction(bool interactive);
 	void				flyup();
 	void				getinfo(stringbuilder& sb) const;
+	variant				getlocation() const { return parent; }
 	const char*			getname() const;
 	planeti*			getplanet() const;
 	int					getvelocity() const;
+	void				getweapons(equipmentq& result, int range);
 	void				hit(damagei& damage);
 	void				investigate();
 	bool				isalive() const { return get(HullDamage) < get(Hull); }
@@ -324,6 +325,7 @@ struct shipi : statable, moveable, waitable, orderable {
 	void				paint(int x, int y) const;
 	void				paint() const { paint(getposition().x, getposition().y); }
 	void				setcourse(bool interactive);
+	void				setlocation(variant v) { parent = v; }
 	void				shoot(object& weapon, shipi& enemy);
 };
 struct squadi {

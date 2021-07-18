@@ -19,7 +19,7 @@ static void paint_spaceships() {
 	auto player = game.getplayer();
 	if(!player)
 		return;
-	systemi* system = player->parent;
+	systemi* system = player->getlocation();
 	if(system) {
 		objects.add(system);
 		objects.addplanets(system);
@@ -37,7 +37,7 @@ const char* shipi::getname() const {
 }
 
 int shipi::getvelocity() const {
-	return bsdata<protoshipi>::elements[type].speed;
+	return get(Speed);
 }
 
 planeti* shipi::getplanet() const {
@@ -211,4 +211,14 @@ bool shipi::iseffective(int range, int enemy_range) const {
 		return true;
 	}
 	return false;
+}
+
+void shipi::getweapons(equipmentq& result, int range) {
+	for(auto& e : objects) {
+		if(!e)
+			continue;
+		if(!e.iseffective(range))
+			continue;
+		result.add(&e);
+	}
 }
