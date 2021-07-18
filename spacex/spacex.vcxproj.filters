@@ -211,5 +211,8 @@
     <None Include="..\data\planets.json">
       <Filter>Данные</Filter>
     </None>
+    <None Include="..\README.md">
+      <Filter>Данные</Filter>
+    </None>
   </ItemGroup>
 </Project>
