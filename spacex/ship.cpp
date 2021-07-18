@@ -166,3 +166,7 @@ void shipi::hit(damagei& damage) {
 		value = 1;
 	set(HullDamage, get(HullDamage) + value);
 }
+
+void shipi::add(const object& v) {
+	objects.add(v);
+}

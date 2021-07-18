@@ -22,9 +22,16 @@ static void test_ship() {
 }
 
 static void test_battle() {
+	auto s1 = bsdata<shipi>::elements + 0;
+	auto s2 = bsdata<shipi>::elements + 2;
+	s1->add(object(Laser, Confideration));
+	s1->add(object(Laser, Confideration));
+	s1->add(object(Laser, Confideration));
+	s2->add(object(MachineGun, Pirates));
+	s2->add(object(Laser, Pirates));
 	spaceunit::cleanup();
-	spaceunit::add(bsdata<shipi>::elements + 2, true);
-	spaceunit::add(bsdata<shipi>::elements + 0, false);
+	spaceunit::add(s1, true);
+	spaceunit::add(s2, false);
 	spaceunit::startbattle();
 }
 

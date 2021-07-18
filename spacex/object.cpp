@@ -24,3 +24,29 @@ int	object::getusemaximum() const {
 	default: return 40;
 	}
 }
+
+bool object::iseffective(int range) const {
+	switch(getkind()) {
+	case Equipment:
+		return bsdata<equipmenti>::elements[getvalue()].iseffective(range);
+	default:
+		return false;
+	}
+}
+
+void object::create(equipment_s type, fraction_s origin, int power) {
+	auto& e = bsdata<equipmenti>::elements[type];
+	setvariant(Equipment, type);
+	this->origin = origin;
+	this->power = power;
+	this->variation = rand() % 4;
+	this->used = 0;
+	switch(origin) {
+	case Rebels:
+	case Pirates:
+		weight = game.random(e.weight[0], e.weight[1], 2);
+	default:
+		weight = xrand(e.weight[0], e.weight[1]);
+		break;
+	}
+}

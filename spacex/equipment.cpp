@@ -6,3 +6,7 @@ BSDATA(equipmenti) = {
 	{"Rocket", "Ракеты", {SlotRocket}, {{12, 25}, 3}, {20, 30}},
 };
 assert_enum(equipmenti, Rocket)
+
+bool equipmenti::iseffective(int v) const {
+	return (distance & (v << 1)) != 0;
+}

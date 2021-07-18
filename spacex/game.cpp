@@ -52,3 +52,20 @@ void gamei::passhour() {
 	}
 	game.round++;
 }
+
+int	gamei::random(int v1, int v2, int c) {
+	auto result = -100;
+	for(auto i = iabs(c); i > 0; i--) {
+		auto v = xrand(v1, v2);
+		if(result == -100)
+			result = v;
+		else if(c > 0) {
+			if(result < v)
+				result = v;
+		} else if(c < 0) {
+			if(result > v)
+				result = v;
+		}
+	}
+	return result;
+}

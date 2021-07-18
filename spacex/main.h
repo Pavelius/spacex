@@ -71,6 +71,13 @@ typedef cflags<fraction_s> fractionf;
 typedef cflags<slot_s> slotf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
+class rangei {
+	unsigned char		value;
+public:
+	constexpr rangei() : value(0) {}
+	constexpr rangei(std::initializer_list<int> v) : value(0) { for(auto e : v) set(e); }
+	constexpr void		set(int v) { value |= 1 << v; }
+};
 struct varianti {
 	const char*			id;
 	array*				source;
@@ -103,6 +110,7 @@ public:
 	const char*			getname() const;
 	constexpr int		getvalue() const { return u & 0xFFFFFF; }
 	void				paint() const;
+	void				setvariant(unsigned char t, unsigned char v) { c[3] = t; c[0] = v; }
 };
 struct varianta {
 	short unsigned		start;
@@ -142,13 +150,15 @@ class object : public variant {
 	unsigned char		used;
 	unsigned char		weight;
 public:
-	constexpr object(variant v) : variant(v), power(0), origin(Independed), variation(0), used(0), weight(0) {}
-	constexpr object() : object(NoVariant) {}
+	constexpr object() : variant(), power(0), origin(), variation(), used(), weight() {}
+	object(equipment_s type, fraction_s origin = Independed, int power = 0) { create(type, origin, power); }
+	void				create(equipment_s type, fraction_s origin, int power);
 	int					getcount() const { return 1; }
 	damagei				getdamage() const;
 	int					getpower() const { return power; }
 	int					getweight() const { return weight * getcount(); }
 	int					getusemaximum() const;
+	bool				iseffective(int range) const;
 	bool				isweapon() const;
 	void				use() { used++; }
 };
@@ -159,6 +169,8 @@ struct equipmenti {
 	slotf				slots;
 	damagei				damage;
 	short				weight[2];
+	unsigned char		distance;
+	bool				iseffective(int v) const;
 };
 class taski {
 	char				counter;
@@ -281,6 +293,7 @@ struct shipi : statable, moveable, waitable, orderable {
 	variant				parent;
 	objectable			objects;
 	constexpr explicit operator bool() const { return parent; }
+	void				add(const object& v);
 	void				apply(variant v, bool interactive);
 	variant				chooseaction(bool interactive);
 	void				flyup();
@@ -370,6 +383,8 @@ public:
 	static void			passhour();
 	void				passtime(int days);
 	static void			play(fnevent timer);
+	static int			random(int v1, int v2) { return xrand(v1, v2); }
+	static int			random(int v1, int v2, int c);
 	static bool			readf(const char* url);
 	static result_s		roll(int dices);
 };
