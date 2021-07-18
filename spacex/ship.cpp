@@ -170,3 +170,45 @@ void shipi::hit(damagei& damage) {
 void shipi::add(const object& v) {
 	objects.add(v);
 }
+
+static int radnomv(int v) {
+	auto d = v / 6;
+	auto v1 = imax(1, v - d);
+	auto v2 = v + d;
+	return xrand(v1, v2);
+}
+
+void shipi::clear() {
+	memset(this, 0, sizeof(*this));
+}
+
+void shipi::create(protoship_s type) {
+	auto& e = bsdata<protoshipi>::elements[type];
+	clear();
+	this->type = type;
+	set(Hull, radnomv(e.hull));
+	set(Speed, radnomv(e.speed));
+	set(Crew, radnomv(e.crew));
+	for(auto v : e.equipments)
+		add(v);
+}
+
+bool shipi::iseffective(int range) const {
+	for(auto v : objects) {
+		if(!v || !v.iseffective(range))
+			continue;
+		return true;
+	}
+	return false;
+}
+
+bool shipi::iseffective(int range, int enemy_range) const {
+	for(auto v : objects) {
+		if(!v)
+			continue;
+		if(!v.iseffective(range) || !v.iseffective(enemy_range + 3))
+			continue;
+		return true;
+	}
+	return false;
+}

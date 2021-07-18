@@ -27,10 +27,8 @@ int	object::getusemaximum() const {
 
 bool object::iseffective(int range) const {
 	switch(getkind()) {
-	case Equipment:
-		return bsdata<equipmenti>::elements[getvalue()].iseffective(range);
-	default:
-		return false;
+	case Equipment: return bsdata<equipmenti>::elements[getvalue()].iseffective(range);
+	default: return false;
 	}
 }
 

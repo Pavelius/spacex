@@ -351,6 +351,8 @@ void shipi::paint(int x, int y) const {
 	text(x - (textw(name) + 1) / 2, y + 1, name);
 	font = old_font;
 	fore = old_fore;
+	if(ishilite({x - 4, y - 4, x + 4, y + 4}))
+		hilite_object = this;
 }
 
 void planeti::paint() const {

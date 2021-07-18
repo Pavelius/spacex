@@ -8,7 +8,7 @@ static systemi* find_system(const char* id) {
 
 static void add_ship(protoship_s type, const char* planet) {
 	auto p = bsdata<shipi>::add();
-	p->type = type;
+	p->create(type);
 	p->parent = "Sun";
 	p->setposition(planet);
 }
@@ -23,15 +23,10 @@ static void test_ship() {
 
 static void test_battle() {
 	auto s1 = bsdata<shipi>::elements + 0;
-	auto s2 = bsdata<shipi>::elements + 2;
-	s1->add(object(Laser, Confideration));
-	s1->add(object(Laser, Confideration));
-	s1->add(object(Laser, Confideration));
-	s2->add(object(MachineGun, Pirates));
-	s2->add(object(Laser, Pirates));
+	auto s2 = bsdata<shipi>::elements + 3;
 	spaceunit::cleanup();
-	spaceunit::add(s1, true);
-	spaceunit::add(s2, false);
+	spaceunit::add(s2, true);
+	spaceunit::add(s1, false);
 	spaceunit::startbattle();
 }
 

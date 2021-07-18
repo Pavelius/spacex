@@ -45,6 +45,9 @@ variant::variant(const char* v) : u(0) {
 }
 
 const char* variant::getname() const {
+	auto k = getkind();
+	if(k == Ship)
+		return bsdata<shipi>::elements[getvalue()].getname();
 	auto& e = bsdata<varianti>::elements[getkind()];
 	if(!e.names[0])
 		return "No name";

@@ -54,7 +54,7 @@ enum result_s : unsigned char {
 	Fail, PartialSuccess, Success, CriticalSuccess,
 };
 enum protoship_s : unsigned char {
-	Zond, Capsule, Shuttle, Ranger, Fighter, Interceptor, Stormship, Transporter,
+	Zond, Capsule, Shuttle, Fighter, Ranger, Interceptor, Battleship, Transporter,
 	Cruiser, Carrier, Linkor, Dreadnought, Station,
 };
 enum action_s : unsigned char {
@@ -66,16 +66,19 @@ enum slot_s : unsigned char {
 	SlotEngine,
 };
 typedef std::initializer_list<const char*> stringa;
+typedef std::initializer_list<equipment_s> equipmenta;
 typedef cflags<building_s> buildingf;
 typedef cflags<fraction_s> fractionf;
 typedef cflags<slot_s> slotf;
 struct statable : dataset<stat_s, HullDamage, unsigned short> {};
 struct resourceable : dataset<resource_s, Drugs, int> {};
+struct shipi;
 class rangei {
 	unsigned char		value;
 public:
 	constexpr rangei() : value(0) {}
 	constexpr rangei(std::initializer_list<int> v) : value(0) { for(auto e : v) set(e); }
+	constexpr bool		is(int v) const { return (value & (1 << v)) != 0; }
 	constexpr void		set(int v) { value |= 1 << v; }
 };
 struct varianti {
@@ -169,8 +172,8 @@ struct equipmenti {
 	slotf				slots;
 	damagei				damage;
 	short				weight[2];
-	unsigned char		distance;
-	bool				iseffective(int v) const;
+	rangei				range;
+	constexpr bool		iseffective(int v) const { return range.is(v); }
 };
 class taski {
 	char				counter;
@@ -277,6 +280,7 @@ struct protoshipi {
 	short				crew;
 	short				hull;
 	short				speed;
+	equipmenta			equipments;
 	fraction_s			manufactor;
 };
 class orderable : adat<variant, 2> {
@@ -286,8 +290,14 @@ public:
 	bool				isorder() const { return operator bool(); }
 	void				removeorder() { remove(0, 1); }
 };
+struct equipmentq : adat<object*, 128> {
+	void				addweapon(shipi* p, int range);
+	void				addweapon(shipi* p, int range, int enemy_range);
+	void				matchef(variants& source, bool keep);
+};
 struct shipi : statable, moveable, waitable, orderable {
 	static const variant_s kind = Ship;
+	statable			basic;
 	protoship_s			type;
 	size_s				size;
 	variant				parent;
@@ -295,14 +305,19 @@ struct shipi : statable, moveable, waitable, orderable {
 	constexpr explicit operator bool() const { return parent; }
 	void				add(const object& v);
 	void				apply(variant v, bool interactive);
+	void				clear();
+	void				create(protoship_s type);
 	variant				chooseaction(bool interactive);
 	void				flyup();
+	void				getinfo(stringbuilder& sb) const;
 	const char*			getname() const;
 	planeti*			getplanet() const;
 	int					getvelocity() const;
 	void				hit(damagei& damage);
 	void				investigate();
 	bool				isalive() const { return get(HullDamage) < get(Hull); }
+	bool				iseffective(int range) const;
+	bool				iseffective(int range, int enemy_range) const;
 	bool				isplayer() const;
 	void				landing();
 	void				maketurn(bool interactive);

@@ -108,8 +108,14 @@ variant spaceunit::chooseaction(bool interactive) const {
 		promt(an, GoingClose);
 	if(getrange() < maximum_range)
 		promt(an, GoingAway);
-	if(select(!isaggressor()))
-		promt(an, ShootAll);
+	variants enemies = select(!isaggressor());
+	if(enemies) {
+		equipmentq weapons;
+		weapons.addweapon(const_cast<spaceunit*>(this)->getship(), getrange());
+		weapons.matchef(enemies, true);
+		if(weapons)
+			promt(an, ShootAll);
+	}
 	return an.choosev(0, 0, interactive, 0);
 }
 
