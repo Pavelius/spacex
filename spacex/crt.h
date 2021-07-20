@@ -57,9 +57,9 @@ extern "C" long long				time(long long* seconds);
 #define NOBSDATA(e) template<> struct bsdata<e> : bsdata<int> {};
 #define assert_enum(e, last) static_assert(sizeof(bsdata<e>::elements) / sizeof(bsdata<e>::elements[0]) == last + 1, "Invalid count of " #e " elements"); BSDATAF(e)
 
-enum codepages { CPNONE, CP1251, CPUTF8, CPU16BE, CPU16LE };
+enum class codepages { None, W1251, UTF8, U16BE, U16LE };
 namespace metrics {
-const codepages						code = CP1251;
+const codepages						code = codepages::W1251;
 }
 //
 bool								equal(const char* s1, const char* s2);
@@ -280,9 +280,9 @@ struct anyreq {
 };
 // Abstract serializer
 struct serializer {
-	enum type_s { Text, Number, Array, Struct };
+	enum class kind { Text, Number, Array, Struct };
 	struct node {
-		type_s						type;
+		kind						type;
 		const char*					name;
 		node*						parent;
 		int							index;
@@ -290,8 +290,8 @@ struct serializer {
 		void*						metadata; // application defined metadata
 		bool						skip; // set this if you want skip block
 		//
-		constexpr node(type_s type = Text) : parent(0), name(""), type(type), index(0), object(0), metadata(0), skip(false) {}
-		constexpr node(node& parent, const char* name = "", type_s type = Text) : parent(&parent), name(name), type(type), index(0), object(0), metadata(0), skip(false) {}
+		constexpr node(kind type = kind::Text) : parent(0), name(""), type(type), index(0), object(0), metadata(0), skip(false) {}
+		constexpr node(node& parent, const char* name = "", kind type = kind::Text) : parent(&parent), name(name), type(type), index(0), object(0), metadata(0), skip(false) {}
 		bool						operator==(const char* name) const { return name && strcmp(this->name, name) == 0; }
 		//
 		int							getlevel() const;
@@ -304,10 +304,10 @@ struct serializer {
 		virtual void				close(node& e) {}
 	};
 	virtual ~serializer() {}
-	virtual void					open(const char* id, type_s type = Text) = 0;
-	virtual void					set(const char* id, int v, type_s type = Number) = 0;
-	virtual void					set(const char* id, const char* v, type_s type = Text) = 0;
-	virtual void					close(const char* id, type_s type = Text) = 0;
+	virtual void					open(const char* id, kind type = kind::Text) = 0;
+	virtual void					set(const char* id, int v, kind type = kind::Number) = 0;
+	virtual void					set(const char* id, const char* v, kind type = kind::Text) = 0;
+	virtual void					close(const char* id, kind type = kind::Text) = 0;
 };
 // Get base type
 template<class T> struct meta_decoy { typedef T value; };

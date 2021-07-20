@@ -89,7 +89,7 @@ static const char* read_dictionary(const char* p, serializer::node& pn, serializ
 static const char* read_string(const char* p, char end_symbol, serializer::node& n, serializer::reader& e) {
 	static char temp[256 * 256];
 	p = psstr(p, temp, end_symbol);
-	n.type = serializer::Text;
+	n.type = serializer::kind::Text;
 	if(!n.skip)
 		e.set(n, temp);
 	return p;
@@ -111,7 +111,7 @@ static const char* read_number(const char* p, serializer::node& n, serializer::r
 		p++;
 	}
 	*ps = 0;
-	n.type = serializer::Number;
+	n.type = serializer::kind::Number;
 	if(!n.skip)
 		e.set(n, temp);
 	return p;
@@ -126,16 +126,16 @@ static const char* read_object(const char* p, serializer::node& n, serializer::r
 		p = read_number(p, n, e);
 	else if(equal(p, "false")) {
 		p += 5;
-		n.type = serializer::Number;
+		n.type = serializer::kind::Number;
 		if(!n.skip)
 			e.set(n, "false");
 	} else if(equal(p, "true")) {
 		p += 4;
-		n.type = serializer::Number;
+		n.type = serializer::kind::Number;
 		if(!n.skip)
 			e.set(n, "true");
 	} else if(*p == '{') {
-		n.type = serializer::Struct;
+		n.type = serializer::kind::Struct;
 		if(!n.skip)
 			e.open(n);
 		p = skipspcr(p + 1);
@@ -148,7 +148,7 @@ static const char* read_object(const char* p, serializer::node& n, serializer::r
 		if(!n.skip)
 			e.close(n);
 	} else if(*p == '[') {
-		n.type = serializer::Array;
+		n.type = serializer::kind::Array;
 		if(!n.skip)
 			e.open(n);
 		p = skipspcr(p + 1);
@@ -166,15 +166,15 @@ static const char* read_object(const char* p, serializer::node& n, serializer::r
 
 struct json_writer : serializer {
 	io::stream& e;
+	kind types[128];
 	int	level;
-	int	types[128];
 	int	count[128];
 	void write_name(const char* name) {
 		if(count[level]) {
 			e << ",";
 			write_cr();
 		}
-		if(level && name && name[0] && types[level] != serializer::Array)
+		if(level && name && name[0] && types[level] != serializer::kind::Array)
 			e << "\"" << name << "\":";
 		count[level]++;
 	}
@@ -185,9 +185,9 @@ struct json_writer : serializer {
 		for(int i = 0; i < level; i++)
 			e << "  ";
 	}
-	void open(const char* name, serializer::type_s type) override {
+	void open(const char* name, serializer::kind type) override {
 		write_name(name);
-		if(type == serializer::Array)
+		if(type == serializer::kind::Array)
 			e << "[";
 		else
 			e << "{";
@@ -195,11 +195,11 @@ struct json_writer : serializer {
 		count[level] = 0;
 		write_cr();
 	}
-	void set(const char* name, int value, serializer::type_s type) override {
+	void set(const char* name, int value, serializer::kind type) override {
 		write_name(name);
 		e << value;
 	}
-	void set(const char* name, const char* value, serializer::type_s type) override {
+	void set(const char* name, const char* value, serializer::kind type) override {
 		if(!value)
 			return;
 		write_name(name);
@@ -234,17 +234,17 @@ struct json_writer : serializer {
 					char temp[16];
 					char* s1 = temp;
 					unsigned u = szget(&value);
-					szput(&s1, u, CPUTF8);
+					szput(&s1, u, codepages::UTF8);
 					e.write(temp, s1 - temp);
 				}
 				break;
 			}
 		}
 	}
-	void close(const char* name, serializer::type_s type) override {
+	void close(const char* name, serializer::kind type) override {
 		level--;
 		write_cr();
-		if(type == serializer::Array)
+		if(type == serializer::kind::Array)
 			e << "]";
 		else
 			e << "}";
@@ -260,7 +260,7 @@ struct json_writer : serializer {
 static struct json_reader_parser : public io::plugin {
 	const char* read(const char* p, serializer::reader& e) override {
 		serializer::node root;
-		root.type = serializer::Struct;
+		root.type = serializer::kind::Struct;
 		return read_object(p, root, e);
 	}
 	serializer* write(io::stream& e) override {
