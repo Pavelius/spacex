@@ -291,7 +291,7 @@ bool					ishilite(const rect& rc);
 bool					ismodal();
 void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha = 0xFF);
 void					image(int x, int y, const sprite* e, int id, int flags, unsigned char alpha, color* pal);
-char*					key2str(char* result, int key);
+void					key2str(stringbuilder& sb, int key);
 void					line(int x1, int y1, int x2, int y2); // Draw line
 void					line(int x1, int y1, int x2, int y2, color c1); // Draw line
 inline void				line(point p1, point p2, color c1) { line(p1.x, p1.y, p2.x, p2.y, c1); }

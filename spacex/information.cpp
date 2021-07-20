@@ -44,6 +44,7 @@ static planeti* findplanet(point pt) {
 void shipi::getinfo(stringbuilder& sb) const {
 	header(sb, "Корпус", get(Hull) - get(HullDamage), get(Hull));
 	header(sb, "Скорость", get(Speed));
+	header(sb, "Команда", get(Crew));
 	if(ismoving()) {
 		auto planet = findplanet(getdestination());
 		if(planet)

@@ -11,7 +11,7 @@ enum variant_s : unsigned char {
 	Action, Equipment, Fraction, Location, Planet, Size, Ship, Spaceunit, Squad, System, Visual
 };
 enum resource_s : unsigned char {
-	Credits, Ore, Food, Medical, Drugs,
+	Credits, Ore, Radioactive, Food, Medical, Drugs,
 };
 enum stat_s : unsigned char {
 	Gunner, Pilot, Technic, Leader,

@@ -321,6 +321,12 @@ static int status(int x, int y, int width, const char* format, const char* title
 		uptop_tooltips();
 		stringbuilder sb(tooltips_text);
 		sb.add(title);
+		if(key) {
+			sb.addn("[");
+			sb.add("Горячая клавиша: ");
+			draw::key2str(sb, key);
+			sb.add("]");
+		}
 	}
 	return x + width + gui.border;
 }
@@ -361,7 +367,7 @@ static void status_panel(bool allow_pause) {
 	if(player)
 		x1 = status(x1, y1, 64, player->get(Credits), "Ваши кредиты");
 	if(allow_pause)
-		x1 = status(x1, y1, button_width, "Пауза", "Остановить игру и выполнить различный действия", show_menu, KeySpace);
+		x1 = status(x1, y1, button_width, "Пауза", "Остановить игру и выполнить различный действия.", show_menu, KeySpace);
 }
 
 void shipi::paint(int x, int y) const {
