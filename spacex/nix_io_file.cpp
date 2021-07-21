@@ -19,8 +19,7 @@ io::file::~file() {
 }
 
 io::file::find::find(const char* url) {
-	path[0] = 0;
-	zcpy(path, url);
+	path[0] = 0; zcpy(path, url);
 	char temp[261];
 	zcpy(temp, path);
 	zcat(temp, "/*.*");
